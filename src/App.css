@@ -1,0 +1,196 @@
+/* Navbar Brand */
+.bi-code-slash {
+  font-size: 2rem;
+  color: orangered;
+}
+
+/* Navbar Links */
+.nav-item .nav-link {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.nav-item .nav-link:hover {
+  color: orangered;
+  transition: color 0.3s ease;
+}
+
+.nav-item .btn-register {
+  background: orangered;
+  color: #fff;
+  padding: 0.375rem 0.75rem;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.nav-item .btn-register:hover {
+  background: #e44a13;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Animated Hero-bg */
+.animated-bg {
+  background: linear-gradient(270deg, #34568a, #1a3f60, #34568a, #092b4d, #0b2d4f);
+  background-size: 1000% 1000%;
+  animation: bgAnimation 30s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes bgAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hero Text Styling */
+.col-md-6 h1 {
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.col-md-6 p.lead {
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #eee;
+}
+
+/* Hero Button */
+.btn-modern {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  margin-right: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease;
+}
+
+.btn-signup {
+  background: linear-gradient(to right, #110360, #b7acf2);
+  color: #fff;
+}
+
+.btn-signup:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+.btn-signin {
+  background-color: #fff;
+  color: #000;
+}
+
+.btn-signin:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-item .btn-signin:hover{
+  transform: none;
+}
+
+/* Image Styling */
+.img-fluid {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.4s ease;
+}
+
+.img-fluid:hover {
+  transform: scale(1.05);
+}
+
+/* Overlay Styles for Mobile Navbar Menu */
+.navbar-overlay {
+  position: fixed;
+  top: 70px; /* adjust based on navbar height */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  padding-top: 20px;
+  z-index: 1050;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Overlay Nav Links */
+.navbar-overlay .nav-link {
+  font-size: 1.3rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+}
+
+/* Remove underline and border from links in navbar overlay on small screens */
+.navbar-overlay .nav-link {
+  text-decoration: none !important;
+  border-bottom: none !important;   
+  box-shadow: none !important;       
+}
+
+/* Overlay Buttons Full Width */
+.navbar-overlay .btn {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  width: 100%;
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent;
+  padding: 0.25rem 0.75rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1100; /* above overlay for toggler */
+  position: relative;
+}
+
+/* Bootstrap Close button adjustments for visibility with embedded SVG times icon */
+.btn-close {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;  /* ensure visible */
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") no-repeat center center;
+  background-size: 1rem 1rem;
+}
+
+.btn-close-dark {
+  filter: none;
+}
+
+/* Optional hover effect */
+.btn-close:hover {
+  opacity: 0.75;
+}
+
