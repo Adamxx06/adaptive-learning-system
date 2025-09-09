@@ -1,9 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from "react-router-dom";
+import "../App.css";
+
 
 const Footer = () => {
     return (
-        <footer className='bg-dark text-white py-4'>
+        <footer className='text-white py-4'>
             <div className="container">
                 <div className="row">
                     <div className="col-md-4">
@@ -15,16 +17,16 @@ const Footer = () => {
                         </Link>
                         <p className='mt-4'>Master coding with adaptive learning. Build real projects, track your progress, and become job-ready with a supportive community by your side</p>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-4 footer-quick-links">
                         <h6>QUICK LINKS</h6>
-                        <div className="footer-liks mt-4">
-                            <p><Link to="/">Courses</Link></p>
+                        <div className="footer-links mt-4">
+                            <p><Link to="/courses">Courses</Link></p>
                             <p><Link to="/about">About Us</Link></p>
                             <p><Link to="/contact">Contact</Link></p>
                             <p><Link to="/terms">Terms of Service</Link></p>
                         </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-4 footer-courses-links">
                         <h6>COURSES</h6>
                         <ul className="list-unstyled course-links mt-4">
                             <li><a href="">HTML</a></li>

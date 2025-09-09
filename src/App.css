@@ -194,3 +194,38 @@
   opacity: 0.75;
 }
 
+
+
+/*Footer styles*/
+
+footer{
+  background: #130a48;
+  color: white;
+}
+.course-links li a{
+  text-decoration: none;
+  color: white;
+  font-size: smaller;
+  line-height: 2.4rem;
+
+}
+
+.footer-quick-links a {
+  text-decoration: none;
+  color: white;
+  font-size: smaller;
+}
+.footer-quick-links h6,
+.footer-courses-links h6 {
+
+  letter-spacing: 0.05em;
+  color: orange;
+}
+
+.footer-quick-links a:hover,
+.footer-courses-links a:hover {
+  color: orange;
+  transition: color 0.3s ease;
+}
+
+
