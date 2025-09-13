@@ -17,9 +17,10 @@ const TermSection: React.FC<TermSectionProps> = ({ number, title, children }) =>
 
 const TermsOfService = () => {
   return (
-    <main className="container my-5" aria-label="Terms of Service">
+    <div className="terms-page">
+    <main className="container terms-of-service" aria-label="Terms of Service">
       <header>
-        <h1>Terms of Service</h1>
+        <h1 className="display-6 mb-4 pt-5">Terms of Service</h1>
         <p>
           Welcome to <b>CodeAdapt</b>. By accessing or using our platform, you agree to comply with these Terms of Service. Please read them carefully before using our services.
         </p>
@@ -57,6 +58,7 @@ const TermsOfService = () => {
         </TermSection>
       </article>
     </main>
+    </div>
   );
 };
 
