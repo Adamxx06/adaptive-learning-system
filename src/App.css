@@ -229,3 +229,47 @@ footer{
 }
 
 
+/* Terms Page */
+.terms-page {
+  background-color: #f8f9fa; /* light gray */
+  min-height: 100vh; /* makes it cover full screen height */
+  padding-bottom: 2rem;
+}
+
+.terms-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.terms-page h1,h4{
+  font-family: "Poppins", sans-serif;
+}
+
+.terms-page p{
+  font-family: "Inter", sans-serif;
+}
+
+.about-page {
+  background: linear-gradient(270deg, #34568a, #1a3f60, #34568a, #092b4d, #0b2d4f);
+  background-size: 1000% 1000%;
+  animation: bgAnimation 30s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes bgAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+

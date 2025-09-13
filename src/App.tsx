@@ -13,6 +13,7 @@ import Contact from './components/pages/Contact';
 import TermsOfService from './components/pages/Terms';
 import Footer from './components/Footer';
 
+
 function App() {
   useEffect(() => {
     AOS.init({
