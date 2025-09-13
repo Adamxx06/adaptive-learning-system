@@ -1,0 +1,27 @@
+/* Background color for the page */
+.bgLight {
+  background-color: #f8f9fa; /* same as Bootstrap's light */
+}
+
+/* Card styling */
+.signinCard {
+  max-width: 500px;
+  margin: 20px 0;
+  border-radius: 12px;
+}
+
+/* Custom button style */
+.btnOrangered {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.btnOrangered:hover {
+  background-color: #e14a00; /* darker shade */
+}
