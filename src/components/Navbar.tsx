@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
 
@@ -16,6 +17,8 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-xl navbar-light bg-light shadow-sm position-relative">
       <div className="container position-relative">
+
+
         {/* Brand Logo */}
         <Link
           className="navbar-brand fw-bold position-relative z-3"
