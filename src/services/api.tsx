@@ -10,7 +10,7 @@ export async function getTopic(topicId: number) {
   const json = await res.json();
   if (!json.success) throw new Error(json.error || "Failed to load topic");
 
-  return json.data; // Return only the topic object
+  return json.data;
 }
 
 /**
@@ -23,5 +23,18 @@ export async function listTopics(courseId: number) {
   const json = await res.json();
   if (!json.success) throw new Error(json.error || "Failed to load topics");
 
-  return json.data; // Return an array of topic objects
+  return json.data;
+}
+
+/**
+ * Fetch quiz for a topic
+ */
+export async function getQuiz(topicId: number) {
+  const res = await fetch(`${API_BASE}/get_quiz.php?topic_id=${topicId}`);
+  if (!res.ok) throw new Error("Failed to load quiz");
+
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || "Failed to load quiz");
+
+  return json.data; // Return quiz object with questions
 }
