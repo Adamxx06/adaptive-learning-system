@@ -49,18 +49,12 @@ function App() {
     <Route path="/contact" element={<Contact />} />
     <Route path="/terms-of-service" element={<TermsOfService />} />
 
-    <Route path="/courses/:courseId/topics" element={<TopicsPage />} />
-
-
     {/* Topics page for a specific course */}
     <Route path="/courses/:courseId/topics" element={<TopicsPage />} />
 
     {/* Quiz page for a specific topic */}
     <Route path="/quiz/:topicId" element={<QuizPage />} />
 
-    {/* Temporary test */}
-  
-    <Route path="/courses/:courseId/topics" element={<TopicsPage />} />
 
   </Route>
 
