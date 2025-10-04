@@ -147,9 +147,9 @@ export default function TopicView({ topicId }: { topicId: number }) {
 
                     let bgColor;
                     if (isSelected && showFeedback) {
-                      bgColor = opt === q.correct_answer ? "#c8e6c9" : "#ffcdd2"; // green/red after submit
+                      bgColor = opt === q.correct_answer ? "#c8e6c9" : "#ffcdd2"; 
                     } else if (isSelected) {
-                      bgColor = "#bbdefb"; // blue when just clicked
+                      bgColor = "#bbdefb"; 
                     }
 
                     return (
