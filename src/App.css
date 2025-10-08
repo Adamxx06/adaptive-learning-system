@@ -242,3 +242,19 @@
   }
 }
 
+
+
+
+/* Custom CSS for Modern Look */
+.transition-colors {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Define a custom, lighter primary color on hover */
+.hover-bg-light-primary:hover {
+  background-color: #e0f7fa; /* A very light cyan/blue */
+  color: #007bff; /* Primary color text */
+}
+
+/* Optional: Better scrollbar for content pane */
+/* Use a library or specific styles for better cross-browser scrollbars if needed */
