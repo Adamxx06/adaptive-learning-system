@@ -38,3 +38,16 @@ export async function getQuiz(topicId: number) {
 
   return json.data; // Return quiz object with questions
 }
+
+export async function listCourses() {
+  return [
+    { id: 1, title: "JavaScript", description: "Learn JS from basics to advanced." },
+    { id: 2, title: "HTML", description: "Master HTML structure and semantics." },
+    { id: 3, title: "CSS", description: "Style web pages beautifully with CSS." },
+    { id: 4, title: "React", description: "Build interactive UIs using React." },
+    { id: 5, title: "PHP", description: "Server-side scripting for web apps." },
+    { id: 6, title: "SQL", description: "Work with databases effectively." },
+  ];
+}
+
+

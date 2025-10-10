@@ -38,7 +38,7 @@ const Home = () => {
   }, []);
 
   const handleStartCourse = (courseName: string, courseId: number) => {
-    // ✅ For JavaScript course only
+    // For JavaScript course only
     if (courseId === 1 || courseName === "JavaScript") {
       navigate(`/courses/${courseId}/topics`);
     } else {

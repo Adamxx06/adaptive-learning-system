@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
 import TopicsSidebar from "../../components/TopicsSidebar";
 import TopicView from "../../components/TopicView";
-import { useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom"; // Added useParams
 
 /**
  * TopicsPage
- * - Reads optional navigation state: { courseId?: number, initialTopicId?: number }
- * - Falls back to courseId = 1 (per your requirement that JS course = 1)
+ * - Reads courseId from the URL path: /courses/:courseId/topics
+ * - Reads optional initialTopicId from navigation state (if any)
  */
 export default function TopicsPage() {
   const location = useLocation();
-  // read courseId and initialTopicId from navigation state (if any)
+  // 1. USE useParams TO GET THE ID FROM THE URL
+  const { courseId: courseIdParam } = useParams<{ courseId: string }>();
+
+  // 2. CONVERT THE ID TO A NUMBER, defaulting to null if invalid
+  // If the path is /courses/2/topics, courseId will be 2.
+  const courseId = courseIdParam ? parseInt(courseIdParam) : null;
+  
+  // Read initialTopicId from navigation state (if any)
   const navState: any = location.state ?? {};
-  const courseIdFromNav = typeof navState.courseId === "number" ? navState.courseId : 1;
   const initialTopicIdFromNav = typeof navState.initialTopicId === "number" ? navState.initialTopicId : null;
 
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(initialTopicIdFromNav);
@@ -26,6 +32,16 @@ export default function TopicsPage() {
   }, [selectedTopicId]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  
+  // Handle case where courseId is missing or invalid (e.g., direct access to /topics)
+  if (courseId === null || isNaN(courseId)) {
+    return (
+      <div className="text-center py-5">
+        <h2 className="text-danger">Error: Invalid Course ID provided.</h2>
+        <p className="lead">Please navigate from the main courses page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="d-flex flex-column flex-lg-row min-vh-100 bg-light">
@@ -47,9 +63,10 @@ export default function TopicsPage() {
         style={{ width: "100%", maxWidth: "320px" }}
       >
         <div className="d-flex flex-column vh-100 sticky-top overflow-auto">
+          {/* 3. PASS THE DYNAMIC courseId TO THE SIDEBAR */}
           <TopicsSidebar
-            courseId={courseIdFromNav}
-            initialActiveTopicId={initialTopicIdFromNav} // new prop to auto-select if provided
+            courseId={courseId} // NOW USES THE DYNAMIC ID FROM THE URL
+            initialActiveTopicId={initialTopicIdFromNav}
             onSelect={(id) => {
               setSelectedTopicId(id);
               if (window.innerWidth < 992) {
