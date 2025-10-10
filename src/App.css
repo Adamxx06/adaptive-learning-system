@@ -195,26 +195,41 @@
 }
 
 
-/* Terms Page */
+/* Terms Page Custom Styles */
+/* Terms Page Custom Styles */
+
+/* 1. Global Reset and Background */
 .terms-page {
-  background-color: #f8f9fa; 
+  /* Set background to pure white for a clean document look */
+  background-color: #fff; 
   min-height: 100vh; 
-  padding-bottom: 2rem;
 }
 
-.terms-page .container {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.terms-page h1,h4{
+/* 2. Typography and Readability */
+.terms-page h1, 
+.terms-page h2, 
+.terms-page h4 {
+  /* Ensure clean, modern heading font */
   font-family: "Poppins", sans-serif;
 }
 
-.terms-page p{
+.terms-page p, 
+.terms-page li,
+.terms-page .text-muted {
+  /* Ensure clear body font with excellent line spacing */
   font-family: "Inter", sans-serif;
+  line-height: 1.8; /* Increased line height for easy reading */
+  font-size: 1rem;
 }
 
+/* 3. Section Number Styling */
+.term-number {
+  /* Use a strong accent color for section numbers */
+  font-size: 1.5rem;
+  color: #ff4500; /* Accent color */
+  display: inline-block;
+  min-width: 30px; 
+}
 
 /*About Page*/
 

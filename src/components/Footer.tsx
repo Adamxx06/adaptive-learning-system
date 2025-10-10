@@ -17,7 +17,7 @@ const quickLinks: LinkItem[] = [
 const courseLinks: LinkItem[] = [
   { label: "HTML", path: "/courses/html" },
   { label: "CSS", path: "/courses/css" },
-  { label: "JavaScript", path: "/courses/javascript" },
+  { label: "JavaScript", path: "/courses" },
   { label: "React", path: "/courses/react" },
 ];
 
