@@ -8,6 +8,51 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 
+const courseStyles = {
+  JavaScript: {
+    iconColor: '#F7DF1E',
+    bgColor: '#e5ebdbff',
+    borderColor: '#F7DF1E',
+    buttonColor: '#F7DF1E',
+    buttonTextColor: '#323330'
+  },
+  HTML: {
+    iconColor: '#E44D26',
+    bgColor: '#F8F9FA',
+    borderColor: '#E44D26',
+    buttonColor: '#E44D26',
+    buttonTextColor: '#FFFFFF'
+  },
+  CSS: {
+    iconColor: '#1572B6',
+    bgColor: '#F8F9FA',
+    borderColor: '#1572B6',
+    buttonColor: '#1572B6',
+    buttonTextColor: '#FFFFFF'
+  },
+  React: {
+    iconColor: '#61DAFB',
+    bgColor: '#7b8294ff',
+    borderColor: '#61DAFB',
+    buttonColor: '#61DAFB',
+    buttonTextColor: '#20232A'
+  },
+  PHP: {
+    iconColor: '#777BB4',
+    bgColor: '#F8F9FA',
+    borderColor: '#777BB4',
+    buttonColor: '#777BB4',
+    buttonTextColor: '#FFFFFF'
+  },
+  SQL: {
+    iconColor: '#00758F',
+    bgColor: '#F8F9FA',
+    borderColor: '#00758F',
+    buttonColor: '#00758F',
+    buttonTextColor: '#FFFFFF'
+  },
+};
+
 const testimonials = [
   { name: "Ada Lovelace", role: "Student", text: "CodeAdapt helped me understand coding concepts at my pace. Truly amazing!" },
   { name: "Grace Hopper", role: "Instructor", text: "The adaptive system makes teaching so much more effective." },
@@ -22,12 +67,12 @@ const testimonials = [
 ];
 
 const courses = [
-  { id: 1, name: "JavaScript", icon: "bi bi-filetype-js" },
-  { id: 2, name: "HTML", icon: "bi bi-filetype-html" },
-  { id: 3, name: "CSS", icon: "bi bi-filetype-css" },
-  { id: 4, name: "React", icon: "bi bi-lightning-fill" },
-  { id: 5, name: "PHP", icon: "bi bi-code-slash" },
-  { id: 6, name: "SQL", icon: "bi bi-database-fill" },
+  { id: 1, name: "JavaScript", icon: "bi bi-filetype-js", description: "The core language of web development" },
+  { id: 2, name: "HTML", icon: "bi bi-filetype-html", description: "Structure the web with semantic markup" },
+  { id: 3, name: "CSS", icon: "bi bi-filetype-css", description: "Design beautiful and responsive layouts" },
+  { id: 4, name: "React", icon: "bi bi-lightning-fill", description: "Build modern, component-based UIs" },
+  { id: 5, name: "PHP", icon: "bi bi-code-slash", description: "Server-side scripting and web backend" },
+  { id: 6, name: "SQL", icon: "bi bi-database-fill", description: "Master relational database management" },
 ];
 
 const Home = () => {
@@ -48,7 +93,7 @@ const Home = () => {
 
   return (
     <>
-      {/* Hero Section */}
+      {/* Hero Section (EXISTING) */}
       <section className="bg-dark text-white animated-bg">
         <div className="container">
           <div
@@ -81,10 +126,51 @@ const Home = () => {
         </div>
       </section>
 
-      {/* How It Works */}
+    {/* Trusted By Section */}
+<section className="py-5 bg-white border-top border-bottom">
+  <div className="container text-center">
+    <h2 className="fw-bold mb-4" data-aos="fade-up">
+      Trusted by Top Companies
+    </h2>
+    <p className="text-muted mb-5" data-aos="fade-up" data-aos-delay="100">
+      We collaborate with global tech leaders and educational partners.
+    </p>
+
+    <div className="row justify-content-center align-items-center g-4" data-aos="fade-up" data-aos-delay="200">
+      {[
+        { name: "Google", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
+        { name: "Microsoft", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
+        { name: "Amazon", img: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
+        { name: "Meta", img: "https://upload.wikimedia.org/wikipedia/commons/0/05/Meta_Platforms_Inc._logo.svg" },
+        { name: "IBM", img: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" },
+      ].map((company, i) => (
+        <div key={i} className="col-6 col-md-2 col-lg-2">
+          <img
+            src={company.img}
+            alt={company.name}
+            className="img-fluid"
+            style={{ maxHeight: "40px", filter: "grayscale(100%)", opacity: 0.8 }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLImageElement).style.filter = "grayscale(0%)";
+              (e.currentTarget as HTMLImageElement).style.opacity = "1";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLImageElement).style.filter = "grayscale(100%)";
+              (e.currentTarget as HTMLImageElement).style.opacity = "0.8";
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+
+      {/* How It Works (EXISTING) */}
       <section className="py-5 bg-light">
         <div className="container text-center">
-          <h2 className="mb-4 fw-bold" data-aos="fade-up">
+          <h2 className="mb-5 fw-bold" data-aos="fade-up">
             How CodeAdapt Works
           </h2>
           <div className="row justify-content-center">
@@ -96,52 +182,206 @@ const Home = () => {
             ].map((feature, i) => (
               <div
                 key={i}
-                className="col-12 col-sm-6 col-md-3 mb-4"
+                className="col-12 col-sm-6 col-md-3 mb-4 d-flex"
                 data-aos="zoom-in"
                 data-aos-delay={100 * (i + 1)}
               >
-                <i className={`bi ${feature.icon} fs-1 mb-3 text-primary`}></i>
-                <h5 className="fw-semibold">{feature.title}</h5>
-                <p className="text-muted">{feature.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Courses */}
-      <section className="py-5 bg-light">
-        <div className="container text-center">
-          <h2 className="fw-bold mb-4" data-aos="fade-up">
-            Popular Courses
-          </h2>
-          <div className="row">
-            {courses.map((course, i) => (
-              <div
-                key={i}
-                className="col-6 col-md-4 col-lg-2 mb-4"
-                data-aos="zoom-in"
-                data-aos-delay={i * 100}
-              >
-                <div className="card shadow-sm h-100">
-                  <div className="card-body">
-                    <i className={`${course.icon} fs-1 text-primary mb-3`}></i>
-                    <h5 className="fw-semibold">{course.name}</h5>
-                    <button
-                      className="btn btn-outline-primary btn-sm mt-2"
-                      onClick={() => handleStartCourse(course.name, course.id)}
-                    >
-                      Start
-                    </button>
+                <div
+                  className="p-4 w-100"
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.07)',
+                    borderTop: '4px solid #0d6efd',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  {/* Icon Wrapper */}
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '50%',
+                      backgroundColor: '#0d6efd',
+                      color: '#ffffff',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: '15px',
+                      boxShadow: '0 4px 10px rgba(13, 110, 253, 0.4)',
+                    }}
+                  >
+                    <i className={`bi ${feature.icon} fs-4`}></i>
                   </div>
+
+                  <h5 className="fw-semibold">{feature.title}</h5>
+                  <p className="text-muted" style={{ fontSize: '0.9rem' }}>{feature.text}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+{/*Detailed Feature Breakdown --- */}
+<section className="py-5 bg-white">
+  <div className="container">
+    <h2 className="text-center fw-bold mb-5" data-aos="fade-up">
+      Adaptive Learning: Why CodeAdapt Works
+    </h2>
 
-      {/* Testimonials */}
+    {/* Feature Block A: Personalization */}
+    <div className="row align-items-center mb-5 pb-5">
+      <div className="col-md-6" data-aos="fade-right">
+        <h3 className="fw-bold mb-3" style={{ color: '#0d6efd' }}>
+          Goodbye Frustration, Hello Flow State
+        </h3>
+        <p className="lead text-muted">
+          Our AI dynamically generates content and practice problems based on your real-time performance, ensuring you're always challenged, never overwhelmed.
+        </p>
+        <ul className="list-unstyled mt-4 text-start">
+          <li className="d-flex align-items-start mb-2">
+            <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+            <span>Targeted Quizzes to fill knowledge gaps immediately.</span>
+          </li>
+          <li className="d-flex align-items-start mb-2">
+            <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+            <span>Adaptive difficulty that scales with your mastery.</span>
+          </li>
+          <li className="d-flex align-items-start mb-2">
+            <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+            <span>Concepts repeated just enough to stick, but not bore you.</span>
+          </li>
+        </ul>
+      </div>
+      <div className="col-md-6 mt-4 mt-md-0 text-center" data-aos="fade-left">
+        <img
+          src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Personalized Learning Chart"
+          className="img-fluid rounded-3 shadow-lg"
+          style={{ maxHeight: '500px', width: '90%', objectFit: 'cover' }}
+        />
+      </div>
+    </div>
+
+    {/* Feature Block B: Practicality*/}
+    <div className="row align-items-center pt-5">
+        <div className="col-md-6 order-md-2" data-aos="fade-left">
+        <h3 className="fw-bold mb-3" style={{ color: '#0d6efd' }}>
+          Learn by Doing: Real-World Projects
+        </h3>
+        <p className="lead text-muted">
+          Theory is useless without application. Every course is built around portfolio-ready projects that mirror industry workflows, getting you job-ready faster.
+        </p>
+        <ul className="list-unstyled mt-4 text-start">
+          <li className="d-flex align-items-start mb-2">
+            <i className="bi bi-code-slash text-warning me-2 mt-1"></i>
+            <span>Integrated development environment (IDE) practice.</span>
+          </li>
+          <li className="d-flex align-items-start mb-2">
+            <i className="bi bi-clipboard-check-fill text-warning me-2 mt-1"></i>
+            <span>Code reviews and feedback loops from mentors.</span>
+          </li>
+          <li className="d-flex align-items-start mb-2">
+            <i className="bi bi-briefcase-fill text-warning me-2 mt-1"></i>
+            <span>Projects designed to pass technical interviews.</span>
+          </li>
+        </ul>
+      </div>
+      <div className="col-md-6 order-md-1 mt-4 mt-md-0 text-center" data-aos="fade-right">
+        <img
+          src="https://images.pexels.com/photos/574069/pexels-photo-574069.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          alt="Coding terminal with hands"
+          className="img-fluid rounded-3 shadow-lg"
+          style={{ maxHeight: '500px', width: '90%', objectFit: 'cover' }}
+        />
+      </div>
+    </div>
+
+  </div>
+</section>
+
+      {/* Courses*/}
+      <section className="py-5 bg-light">
+        <div className="container text-center">
+          <h2 className="fw-bold mb-5" data-aos="fade-up">
+            Popular Courses
+          </h2>
+          <div className="row justify-content-center">
+            {courses.map((course, i) => {
+              const styles = courseStyles[course.name as keyof typeof courseStyles];
+              return (
+                <div
+                  key={i}
+                  className="col-6 col-md-4 col-lg-2 mb-4 d-flex"
+                  data-aos="zoom-in"
+                  data-aos-delay={i * 100}
+                >
+                  <div
+                    style={{
+                      backgroundColor: styles.bgColor,
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      borderLeft: `5px solid ${styles.borderColor}`,
+                      padding: '20px',
+                      width: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {/* Icon Container */}
+                    <div
+                      style={{
+                        backgroundColor: styles.iconColor,
+                        color: styles.bgColor === '#F8F9FA' ? styles.bgColor : styles.iconColor === '#F7DF1E' ? styles.bgColor : '#FFFFFF',
+                        borderRadius: '50%',
+                        width: '50px',
+                        height: '50px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: '15px',
+                        boxShadow: `0 2px 8px ${styles.borderColor}66`,
+                      }}
+                    >
+                      <i className={`${course.icon} fs-4`}></i>
+                    </div>
+
+                    <h5 className="fw-bold mb-1" style={{ color: styles.bgColor === '#20232A' ? '#FFFFFF' : '#212529' }}>
+                        {course.name}
+                    </h5>
+
+                    <p className="text-muted small mb-3" style={{ fontSize: '0.8rem', color: styles.bgColor === '#20232A' ? '#ADB5BD' : '#6C757D' }}>
+                        {course.description}
+                    </p>
+
+                    <button
+                      className="btn btn-sm mt-auto"
+                      style={{
+                        backgroundColor: styles.buttonColor,
+                        color: styles.buttonTextColor,
+                        border: 'none',
+                        fontWeight: '600',
+                        width: '100%',
+                        borderRadius: '6px',
+                        padding: '8px 0',
+                        boxShadow: `0 2px 4px ${styles.borderColor}88`,
+                      }}
+                      onClick={() => handleStartCourse(course.name, course.id)}
+                    >
+                      Start Course
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials*/}
       <section className="py-5 bg-light">
         <div className="container">
           <h2 className="text-center fw-bold mb-5" data-aos="fade-up">
@@ -166,10 +406,10 @@ const Home = () => {
             {testimonials.map((t, i) => (
               <SwiperSlide key={i}>
                 <div
-                  className="card shadow-sm h-100 text-center p-3"
-                  style={{ minHeight: "280px" }}
+                  className="shadow-sm h-100 text-center p-4 bg-white"
+                  style={{ minHeight: "280px", borderRadius: '10px' }}
                 >
-                  <p className="card-text">“{t.text}”</p>
+                  <p className="lead mb-4" style={{ fontSize: '1.05rem' }}>“{t.text}”</p>
                   <h6 className="fw-bold mt-3 mb-0">{t.name}</h6>
                   <small className="text-muted">{t.role}</small>
                 </div>
@@ -179,15 +419,39 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-5 text-center bg-primary text-white">
-        <div className="container" data-aos="zoom-in">
-          <h2 className="fw-bold mb-3">Ready to Start Your Coding Journey?</h2>
-          <p className="lead mb-4">
+      {/* Call to Action*/}
+      <section
+        className="py-5 mb-5 text-white"
+        style={{
+          background: 'linear-gradient(135deg, #194689 0%, #0d2c55 100%)',
+          boxShadow: '0 -4px 15px rgba(0, 0, 0, 0.2)',
+          padding: '70px 0',
+        }}
+      >
+        <div className="container text-center" data-aos="zoom-in">
+          <h2 className="fw-bold mb-3" style={{ fontSize: '2.5rem', lineHeight: '1.2' }}>
+            Ready to Start Your <br /><span style={{ color: 'rgba(255,255,255,0.85)' }}>Coding Journey?</span>
+          </h2>
+          <p className="lead mb-4" style={{
+            maxWidth: '700px',
+            margin: '0 auto 2.5rem auto',
+            opacity: '0.9'
+          }}>
             Join CodeAdapt today and learn at your own pace with adaptive guidance.
+            Build real projects, track your progress, and become job-ready with a supportive community by your side.
           </p>
           <button
-            className="btn btn-light btn-lg"
+            className="btn btn-lg fw-bold"
+            style={{
+              padding: '12px 30px',
+              borderRadius: '30px',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase',
+              backgroundColor: '#61DAFB',
+              color: '#0d2c55',
+              border: 'none',
+              boxShadow: '0 6px 20px rgba(97, 218, 251, 0.4)',
+            }}
             onClick={() => navigate("/courses/1/topics")}
           >
             Get Started
