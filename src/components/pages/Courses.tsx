@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import AOS from 'aos'; // 1. IMPORT AOS
-import 'aos/dist/aos.css'; // You must import the CSS globally (or here)
+import AOS from 'aos'; 
+import 'aos/dist/aos.css'; 
 import { listCourses } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
-// Define the core types used by the component
 type Course = {
   id: number;
   title: string;
@@ -69,10 +68,10 @@ export default function Courses() {
   // 2. INITIALIZE AOS
   useEffect(() => {
     AOS.init({
-      duration: 1000, // global duration for animations
-      once: true, // whether animation should happen only once - default
+      duration: 1000, 
+      once: true,
     });
-    // Fetching logic below (original code)
+    
     async function fetchCourses() {
       try {
         const data: Course[] = await listCourses();
@@ -92,7 +91,6 @@ export default function Courses() {
   }, []);
 
 
-  // Handler for course navigation (Dynamic ID included)
   const handleViewCurriculum = (courseId: number) => {
     navigate(`/courses/${courseId}/topics`); 
   };
@@ -104,10 +102,9 @@ export default function Courses() {
       </div>
     );
 
-  // 3. ADD data-aos ATTRIBUTES TO SECTIONS AND ELEMENTS
   return (
     <>
-      {/* 1. HERO SECTION (data-aos="fade-down" on main elements) */}
+      {/*HERO SECTION*/} 
       <section
         className="text-center text-white py-5 position-relative"
         style={{
@@ -119,7 +116,7 @@ export default function Courses() {
             Master the Craft: Professional Front-End Development
           </h1>
           <p className="lead mb-4 fw-light" data-aos="fade-up" data-aos-delay="300">
-            Transition from coding knowledge to **professional application**. Learn architecture, tooling, and best practices from a 10-year industry expert.
+            Transition from coding knowledge to professional application. Learn architecture, tooling, and best practices from a 10-year industry expert.
           </p>
           <button
             className="btn btn-warning btn-lg fw-bold px-5 py-3 shadow-lg"
@@ -136,9 +133,7 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* --- */}
-
-      {/* 1.5. Key Statistics Bar (data-aos="fade-up" on the container) */}
+     
       <section className="py-4 shadow-sm" style={{ backgroundColor: "#002147" }} data-aos="fade-up" data-aos-duration="800">
         <div className="container">
           <div className="row text-center text-white">
@@ -162,9 +157,9 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* --- */}
 
-      {/* 2. COURSE GRID (Individual cards with staggered 'fade-up' animation) */}
+
+      {/*COURSE GRID*/}
       <section className="container py-5">
         <h2 className="fw-bolder text-center mb-5" style={{ color: "#002147" }} data-aos="fade-up">
           The Essential Professional Curriculum
@@ -183,8 +178,8 @@ export default function Courses() {
                 <div 
                     className="col-sm-6 col-md-4 col-lg-3" 
                     key={course.id} 
-                    data-aos="fade-up" // Animation on card
-                    data-aos-delay={index * 150} // Staggered delay for cool effect
+                    data-aos="fade-up" 
+                    data-aos-delay={index * 150} 
                     data-aos-anchor-placement="top-bottom"
                 >
                   <div
@@ -196,7 +191,6 @@ export default function Courses() {
                       overflow: "hidden",
                     }}
                     onClick={() => handleViewCurriculum(course.id)} 
-                    // Advanced Hover Effect
                     onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
                         e.currentTarget.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
@@ -207,7 +201,6 @@ export default function Courses() {
                     }}
                   >
                     
-                    {/* Advanced Card Header: Icon and Gradient */}
                     <div 
                         className="p-3 d-flex align-items-center justify-content-center"
                         style={{ 
@@ -276,9 +269,8 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* --- */}
       
-      {/* 3. Detailed Learning Outcomes */}
+      {/* Detailed Learning Outcomes */}
       <section className="py-5" style={{ background: "#f8f9fa" }} data-aos="fade-in">
         <div className="container">
           <h2 className="fw-bolder text-center mb-5" style={{ color: "#002147" }} data-aos="fade-up">
@@ -294,12 +286,12 @@ export default function Courses() {
                     <p className="text-muted small mb-0">Decompose complex interfaces into reusable, tested components, ready for frameworks like React or Vue.</p>
                   </div>
                 </li>
-                {/* ... other list items ... */}
+
               </ul>
             </div>
             <div className="col-md-6 mb-4" data-aos="fade-left">
               <ul className="list-unstyled">
-                {/* ... list items ... */}
+              
                 <li className="d-flex align-items-start mb-3">
                   <i className="bi bi-check-circle-fill fs-5 me-3" style={{ color: "#0d6efd" }}></i>
                   <div>
@@ -327,9 +319,7 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* --- */}
-
-      {/* 4. INSTRUCTOR/AUTHORITY SECTION */}
+      {/* INSTRUCTOR/AUTHORITY SECTION */}
       <section className="py-5 bg-light" data-aos="fade-up">
         <div className="container">
           <h2 className="fw-bolder text-center mb-5" style={{ color: "#002147" }}>
@@ -371,9 +361,8 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* --- */}
 
-      {/* 5. WHY LEARN WITH US (Refined) */}
+      {/*WHY LEARN WITH US*/}
       <section
         className="py-5 text-white"
         style={{ backgroundColor: "#001f3f" }}
@@ -388,7 +377,7 @@ export default function Courses() {
               <i className="bi bi-tools fs-1 text-warning mb-3"></i>
               <h5 className="fw-bold">Modern Tooling Mastery</h5>
               <p className="text-light">
-                You'll configure and deploy professional pipelines with **Webpack, Babel, ESLint, and Git**.
+                You'll configure and deploy professional pipelines with Webpack, Babel, ESLint, and Git.
               </p>
             </div>
             <div className="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="150">
@@ -408,10 +397,9 @@ export default function Courses() {
           </div>
         </div>
       </section>
-      
-      {/* --- */}
 
-      {/* 6. ADAPTIVE LEARNING & SUPPORT SYSTEM */}
+
+      {/*ADAPTIVE LEARNING & SUPPORT SYSTEM */}
       <section className="py-5" data-aos="fade-in">
         <div className="container">
             <h2 className="fw-bolder text-center mb-5" style={{ color: "#002147" }} data-aos="fade-up">
@@ -425,7 +413,7 @@ export default function Courses() {
                     <p className="lead text-muted">
                         Our platform continuously assesses your progress, automatically adjusting content depth and quizzes to match your unique learning pace and prior knowledge.
                     </p>
-                    {/* ... list items ... */}
+                   
                 </div>
                 <div className="col-md-6 text-center" data-aos="zoom-in" data-aos-delay="400">
                     <div className="p-4 rounded shadow-lg" style={{ backgroundColor: '#fff', border: '1px solid #ddd' }}>
@@ -437,9 +425,8 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* --- */}
 
-      {/* 7. SOCIAL PROOF/TESTIMONIALS */}
+      {/*SOCIAL PROOF/TESTIMONIALS */}
       <section className="py-5 bg-light" data-aos="fade-up">
         <div className="container">
           <h2 className="fw-bolder text-center mb-5" style={{ color: "#002147" }}>
@@ -461,10 +448,8 @@ export default function Courses() {
           </div>
         </div>
       </section>
-      
-      {/* --- */}
 
-      {/* 8. FINAL CTA SECTION */}
+      {/*FINAL CTA SECTION */}
       <section
         className="text-center py-5"
         style={{
