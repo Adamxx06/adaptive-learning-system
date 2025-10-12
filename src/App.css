@@ -107,7 +107,6 @@
   transform: none;
 }
 
-/* Image Styling */
 .img-fluid {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -121,7 +120,7 @@
 /* Overlay Styles for Mobile Navbar Menu */
 .navbar-overlay {
   position: fixed;
-  top: 70px; /* adjust based on navbar height */
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -168,16 +167,15 @@
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
-  z-index: 1100; /* above overlay for toggler */
+  z-index: 1100; 
   position: relative;
 }
 
-/* Bootstrap Close button adjustments for visibility with embedded SVG times icon */
 .btn-close {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
-  opacity: 1 !important;  /* ensure visible */
+  opacity: 1 !important;
   width: 1.5rem;
   height: 1.5rem;
   cursor: pointer;
@@ -189,36 +187,29 @@
   filter: none;
 }
 
-/* Optional hover effect */
 .btn-close:hover {
   opacity: 0.75;
 }
 
 
 /* Terms Page Custom Styles */
-/* Terms Page Custom Styles */
 
-/* 1. Global Reset and Background */
 .terms-page {
-  /* Set background to pure white for a clean document look */
   background-color: #fff; 
   min-height: 100vh; 
 }
 
-/* 2. Typography and Readability */
 .terms-page h1, 
 .terms-page h2, 
 .terms-page h4 {
-  /* Ensure clean, modern heading font */
   font-family: "Poppins", sans-serif;
 }
 
 .terms-page p, 
 .terms-page li,
 .terms-page .text-muted {
-  /* Ensure clear body font with excellent line spacing */
   font-family: "Inter", sans-serif;
-  line-height: 1.8; /* Increased line height for easy reading */
+  line-height: 1.8;
   font-size: 1rem;
 }
 
@@ -230,46 +221,3 @@
   display: inline-block;
   min-width: 30px; 
 }
-
-/*About Page*/
-
-.about-page {
-  background: linear-gradient(270deg, #34568a, #1a3f60, #34568a, #092b4d, #0b2d4f);
-  background-size: 1000% 1000%;
-  animation: bgAnimation 30s ease infinite;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  position: relative;
-  overflow: hidden;
-}
-
-@keyframes bgAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-
-
-
-/* Custom CSS for Modern Look */
-.transition-colors {
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-/* Define a custom, lighter primary color on hover */
-.hover-bg-light-primary:hover {
-  background-color: #e0f7fa; /* A very light cyan/blue */
-  color: #007bff; /* Primary color text */
-}
-
-/* Optional: Better scrollbar for content pane */
-/* Use a library or specific styles for better cross-browser scrollbars if needed */
