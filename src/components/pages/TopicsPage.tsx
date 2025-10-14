@@ -3,28 +3,24 @@ import TopicsSidebar from "../../components/TopicsSidebar";
 import TopicView from "../../components/TopicView";
 import { useParams, useLocation } from "react-router-dom"; // Added useParams
 
-/**
- * TopicsPage
- * - Reads courseId from the URL path: /courses/:courseId/topics
- * - Reads optional initialTopicId from navigation state (if any)
- */
+
 export default function TopicsPage() {
   const location = useLocation();
-  // 1. USE useParams TO GET THE ID FROM THE URL
+  // Use useParams to get ID from the URL
   const { courseId: courseIdParam } = useParams<{ courseId: string }>();
 
-  // 2. CONVERT THE ID TO A NUMBER, defaulting to null if invalid
+  // Convert the ID to a number, defaulting to null if invalid
   // If the path is /courses/2/topics, courseId will be 2.
   const courseId = courseIdParam ? parseInt(courseIdParam) : null;
   
-  // Read initialTopicId from navigation state (if any)
+  // Read initialTopicId from navigation state
   const navState: any = location.state ?? {};
   const initialTopicIdFromNav = typeof navState.initialTopicId === "number" ? navState.initialTopicId : null;
 
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(initialTopicIdFromNav);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Close the sidebar on mobile after a selection (UX)
+  // Close the sidebar on mobile after a selection
   useEffect(() => {
     if (selectedTopicId !== null && window.innerWidth < 992) {
       setIsSidebarOpen(false);
@@ -63,9 +59,9 @@ export default function TopicsPage() {
         style={{ width: "100%", maxWidth: "320px" }}
       >
         <div className="d-flex flex-column vh-100 sticky-top overflow-auto">
-          {/* 3. PASS THE DYNAMIC courseId TO THE SIDEBAR */}
+          {/* Pass the dynamic courseid to the sidebar*/}
           <TopicsSidebar
-            courseId={courseId} // NOW USES THE DYNAMIC ID FROM THE URL
+            courseId={courseId} 
             initialActiveTopicId={initialTopicIdFromNav}
             onSelect={(id) => {
               setSelectedTopicId(id);
