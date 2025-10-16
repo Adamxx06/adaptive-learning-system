@@ -82,14 +82,15 @@ const Home = () => {
     AOS.init({ duration: 1000, once: true });
   }, []);
 
-  const handleStartCourse = (courseName: string, courseId: number) => {
-    // For JavaScript course only
-    if (courseId === 1 || courseName === "JavaScript") {
-      navigate(`/courses/${courseId}/topics`);
-    } else {
-      alert(`${courseName} course is coming soon!`);
-    }
-  };
+const handleStartCourse = (courseName: string, courseId: number) => {
+  const availableCourses = [1, 2, 3, 4, 5, 6]; // IDs of courses that exist in your DB
+  if (availableCourses.includes(courseId)) {
+    navigate(`/courses/${courseId}/topics`);
+  } else {
+    alert(`${courseName} course is coming soon!`);
+  }
+};
+
 
   return (
     <>
