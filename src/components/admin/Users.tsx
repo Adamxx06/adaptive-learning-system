@@ -1,170 +1,240 @@
-// src/components/Admin/UsersPage.tsx
-import React, { useState } from "react";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
-type User = {
+interface User {
+  id: number;
   name: string;
   email: string;
   role: string;
   joined: string;
-};
-
-const sampleUsers: User[] = [
-  { name: "Ada Lovelace", email: "ada@example.com", role: "Admin", joined: "2025-09-10" },
-  { name: "Grace Hopper", email: "grace@example.com", role: "Student", joined: "2025-09-11" },
-  { name: "Linus Torvalds", email: "linus@example.com", role: "Instructor", joined: "2025-09-12" },
-  { name: "Alan Turing", email: "alan@example.com", role: "Admin", joined: "2025-09-13" },
-  { name: "Barbara Liskov", email: "barbara@example.com", role: "Student", joined: "2025-09-14" },
-  { name: "Donald Knuth", email: "donald@example.com", role: "Admin", joined: "2025-09-15" },
-];
+}
 
 const UsersPage: React.FC = () => {
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<keyof User>("joined");
-  const [asc, setAsc] = useState(true);
-  const [page, setPage] = useState(1);
-  const [roleFilter, setRoleFilter] = useState("All");
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
-  const pageSize = 5;
+  const API_BASE = "http://localhost/codeadapt-backend/api";
 
-  // Filter + search
-  let filtered = sampleUsers.filter(
-    (u) =>
-      (roleFilter === "All" || u.role === roleFilter) &&
-      (u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase()))
-  );
+  // Fetch users
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/get-users.php`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (data.success) setUsers(data.users);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
 
-  // Sort
-  filtered = filtered.sort((a, b) => {
-    if (a[sortBy] < b[sortBy]) return asc ? -1 : 1;
-    if (a[sortBy] > b[sortBy]) return asc ? 1 : -1;
-    return 0;
-  });
+  // ✅ SweetAlert2 delete confirmation
+  const confirmDelete = async (id: number) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This user will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+    if (!result.isConfirmed) return;
 
-  const handleSort = (field: keyof User) => {
-    if (sortBy === field) setAsc(!asc);
-    else {
-      setSortBy(field);
-      setAsc(true);
+    try {
+      const response = await fetch(`${API_BASE}/delete-user.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      const res = await response.json();
+      if (res.success) {
+        setUsers(users.filter((u) => u.id !== id));
+
+        await Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "User has been deleted successfully.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: res.message || "Unable to delete user.",
+        });
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Network Error",
+        text: "Could not connect to the backend. Please try again.",
+      });
     }
   };
 
+  // Start editing
+  const handleEdit = (user: User) => {
+    setEditingUser(user);
+  };
+
+  // Save edit (already works fine with your PHP)
+  const saveEdit = async () => {
+    if (!editingUser) return;
+    try {
+      const response = await fetch(`${API_BASE}/update_user_refined.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingUser.id,
+          name: editingUser.name,
+          email: editingUser.email,
+          role: editingUser.role,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setUsers(users.map((u) => (u.id === editingUser.id ? editingUser : u)));
+        setEditingUser(null);
+
+        Swal.fire({
+          icon: "success",
+          title: "Updated!",
+          text: "User details were successfully updated.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: result.message || "Unable to update user.",
+        });
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Network Error",
+        text: "Failed to connect to backend.",
+      });
+    }
+  };
+
+  if (loading) return <p>Loading users...</p>;
+
   return (
-    <div className="container mt-4">
-      <h2 className="mb-3">Users Management</h2>
+    <div className="container my-5">
+      <h2 className="mb-4 text-center text-primary">Registered Users</h2>
 
-      {/* Filters */}
-      <div className="d-flex justify-content-between mb-3">
-        <input
-          type="text"
-          className="form-control w-25"
-          placeholder="Search by name or email"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select
-          className="form-select w-25"
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-        >
-          <option value="All">All Roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Instructor">Instructor</option>
-          <option value="Student">Student</option>
-        </select>
-      </div>
-
-      {/* Table */}
-      <div className="table-responsive">
-        <table className="table table-striped table-hover align-middle">
-          <thead className="table-dark sticky-top">
+      <table className="table table-bordered table-hover shadow-sm">
+        <thead className="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.length === 0 ? (
             <tr>
-              <th style={{ cursor: "pointer" }} onClick={() => handleSort("name")}>
-                Name {sortBy === "name" && (asc ? "▲" : "▼")}
-              </th>
-              <th style={{ cursor: "pointer" }} onClick={() => handleSort("email")}>
-                Email {sortBy === "email" && (asc ? "▲" : "▼")}
-              </th>
-              <th style={{ cursor: "pointer" }} onClick={() => handleSort("role")}>
-                Role {sortBy === "role" && (asc ? "▲" : "▼")}
-              </th>
-              <th style={{ cursor: "pointer" }} onClick={() => handleSort("joined")}>
-                Joined {sortBy === "joined" && (asc ? "▲" : "▼")}
-              </th>
-              <th>Actions</th>
+              <td colSpan={6} className="text-center text-muted">
+                No users found.
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {paginated.length > 0 ? (
-              paginated.map((user, idx) => (
-                <tr key={idx}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    <span
-                      className={`badge ${
-                        user.role === "Admin"
-                          ? "bg-danger"
-                          : user.role === "Instructor"
-                          ? "bg-primary"
-                          : "bg-success"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
-                  </td>
-                  <td>{user.joined}</td>
-                  <td>
-                    <button className="btn btn-sm btn-outline-info me-2">
-                      <FaEye />
-                    </button>
-                    <button className="btn btn-sm btn-outline-warning me-2">
-                      <FaEdit />
-                    </button>
-                    <button className="btn btn-sm btn-outline-danger">
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="text-center">
-                  No users found
+          ) : (
+            users.map((user, index) => (
+              <tr key={user.id}>
+                <td>{index + 1}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>{user.joined}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-primary me-2"
+                    onClick={() => handleEdit(user)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => confirmDelete(user.id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
 
-      {/* Pagination + result info */}
-      <div className="d-flex justify-content-between align-items-center">
-        <span>
-          Showing {(page - 1) * pageSize + 1}–
-          {Math.min(page * pageSize, filtered.length)} of {filtered.length} users
-        </span>
-        <div>
-          <button
-            className="btn btn-sm btn-secondary me-2"
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Prev
+      {/* Edit Form */}
+      {editingUser && (
+        <div className="card p-4 shadow mt-4">
+          <h4 className="mb-3 text-primary">Edit User</h4>
+          <div className="mb-3">
+            <label className="form-label">Full Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editingUser.name}
+              onChange={(e) =>
+                setEditingUser({ ...editingUser, name: e.target.value })
+              }
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              value={editingUser.email}
+              onChange={(e) =>
+                setEditingUser({ ...editingUser, email: e.target.value })
+              }
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Role</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editingUser.role}
+              onChange={(e) =>
+                setEditingUser({ ...editingUser, role: e.target.value })
+              }
+            />
+          </div>
+          <button className="btn btn-success me-2" onClick={saveEdit}>
+            Save
           </button>
           <button
-            className="btn btn-sm btn-secondary"
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
+            className="btn btn-secondary"
+            onClick={() => setEditingUser(null)}
           >
-            Next
+            Cancel
           </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };

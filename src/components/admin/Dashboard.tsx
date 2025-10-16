@@ -1,5 +1,5 @@
 // src/components/Admin/Dashboard.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -18,55 +18,101 @@ import {
 import RecentUsersTable from "./RecentUsersTable";
 import styles from "./Dashboard.module.css";
 
-/* Sample data */
-const userData = [
-  { month: "Jan", users: 200 },
-  { month: "Feb", users: 350 },
-  { month: "Mar", users: 500 },
-  { month: "Apr", users: 700 },
-  { month: "May", users: 900 },
-  { month: "Jun", users: 1100 },
-  { month: "Jul", users: 1400 },
-  { month: "Aug", users: 1600 },
-  { month: "Sep", users: 1850 },
-  { month: "Oct", users: 2000 },
-  { month: "Nov", users: 2200 },
-  { month: "Dec", users: 2500 },
-];
 
-const courseData = [
-  { category: "HTML", courses: 12 },
-  { category: "CSS", courses: 8 },
-  { category: "JavaScript", courses: 15 },
-];
+interface UserGrowthData { month: string; users: number }
+interface CourseData { category: string; courses: number }
+interface ActiveUserData { name: string; value: number }
 
-const activeUsersData = [
-  { name: "Active", value: 1600 },
-  { name: "Inactive", value: 400 },
-];
+interface DashboardData {
+  userGrowth: UserGrowthData[];
+  courseData: CourseData[];
+  activeUsersData: ActiveUserData[];
+  quickStats: {
+    totalUsers: number;
+    activeUsers: number;
+    totalCourses: number;
+    engagement: string;
+  };
+}
+
+// ----------------------------------------------------
+// 2. INITIAL STATE (Safe "Zero" values for first render)
+// ----------------------------------------------------
+const initialData: DashboardData = {
+  userGrowth: [],
+  courseData: [],
+  activeUsersData: [],
+  quickStats: {
+    totalUsers: 0,
+    activeUsers: 0,
+    totalCourses: 0,
+    engagement: "0%",
+  },
+};
 
 const COLORS = ["#2563eb", "#f87171"];
 
 const Dashboard: React.FC = () => {
+  // Set up state to hold data and loading status
+  const [data, setData] = useState<DashboardData>(initialData);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // NOTE: Adjust the API_URL to where your PHP file is located
+  const API_URL = "http://localhost/codeadapt-backend/api/dashboard-data.php";
+
+  // 3. DATA FETCHING LOGIC
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const fetchedData: DashboardData = await response.json();
+        
+        // This line assumes your PHP outputs the full structure correctly
+        setData(fetchedData); 
+
+      } catch (error) {
+        console.error("Could not fetch dashboard data:", error);
+        // Optionally, set an error state here
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []); // Empty dependency array: runs only once on mount
+
+  // Display a loading message while fetching data
+  if (isLoading) {
+      return <div className={styles.wrapper}>Loading Dashboard Data...</div>;
+  }
+
+  // 4. RENDER COMPONENT USING STATE DATA
   return (
     <div className={styles.wrapper}>
       {/* Quick stat cards */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <div className={styles.statTitle}>Total Users</div>
-          <div className={styles.statValue}>1,245</div>
+          {/* Using state data */}
+          <div className={styles.statValue}>{data.quickStats.totalUsers.toLocaleString()}</div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statTitle}>Active Users</div>
-          <div className={styles.statValue}>1,600</div>
+          {/* Using state data */}
+          <div className={styles.statValue}>{data.quickStats.activeUsers.toLocaleString()}</div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statTitle}>Total Courses</div>
-          <div className={styles.statValue}>35</div>
+          {/* Using state data */}
+          <div className={styles.statValue}>{data.quickStats.totalCourses}</div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statTitle}>Engagement</div>
-          <div className={styles.statValue}>87%</div>
+          {/* Using state data */}
+          <div className={styles.statValue}>{data.quickStats.engagement}</div>
         </div>
       </div>
 
@@ -77,7 +123,8 @@ const Dashboard: React.FC = () => {
           <div className={styles.cardHeader}>User Growth (Jan–Dec)</div>
           <div style={{ width: "100%", height: 320 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={userData}>
+              {/* Using state data */}
+              <LineChart data={data.userGrowth}> 
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
@@ -100,7 +147,8 @@ const Dashboard: React.FC = () => {
           <div className={styles.cardHeader}>Courses per Category</div>
           <div style={{ width: "100%", height: 240 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={courseData}>
+              {/* Using state data */}
+              <BarChart data={data.courseData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="category" />
                 <YAxis />
@@ -118,15 +166,17 @@ const Dashboard: React.FC = () => {
           <div style={{ width: "100%", height: 240 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
+                {/* Using state data */}
                 <Pie
-                  data={activeUsersData}
+                  data={data.activeUsersData}
                   dataKey="value"
                   cx="50%"
                   cy="50%"
                   outerRadius={70}
                   label
                 >
-                  {activeUsersData.map((_, idx) => (
+                  {/* Using state data */}
+                  {data.activeUsersData.map((_, idx) => (
                     <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
                   ))}
                 </Pie>
