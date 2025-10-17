@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Table, Button, Form, InputGroup, Pagination } from "react-bootstrap";
-import Swal from "sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
+import React, { useEffect, useState, useCallback } from "react";
+import { Table, Button, Form, InputGroup, Pagination, Modal } from "react-bootstrap";
 
 interface Course {
   id: number;
@@ -10,6 +8,49 @@ interface Course {
   created_at: string;
   updated_at: string;
 }
+
+interface CustomModalProps {
+  show: boolean;
+  onHide: () => void;
+  title: string;
+  body: string;
+  confirmText: string;
+  onConfirm: () => void;
+  variant: 'danger' | 'success';
+}
+
+const CustomConfirmModal: React.FC<CustomModalProps> = ({
+  show,
+  onHide,
+  title,
+  body,
+  confirmText,
+  onConfirm,
+  variant
+}) => {
+  const handleConfirm = () => {
+    onConfirm();
+    onHide();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{body}</Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Cancel
+        </Button>
+        <Button variant={variant} onClick={handleConfirm}>
+          {confirmText}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
 
 const Courses: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -21,7 +62,25 @@ const Courses: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
 
+  // State for Delete Confirmation Modal
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState<number | null>(null);
+
+  // State for Success/Error Notification Modal
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationTitle, setNotificationTitle] = useState('');
+  const [notificationBody, setNotificationBody] = useState('');
+  const [notificationVariant, setNotificationVariant] = useState<'success' | 'danger'>('success');
+
+
   const API_BASE = "http://localhost/codeadapt-backend/api";
+
+  const showStatusNotification = (title: string, body: string, variant: 'success' | 'danger') => {
+    setNotificationTitle(title);
+    setNotificationBody(body);
+    setNotificationVariant(variant);
+    setShowNotification(true);
+  };
 
   // Fetch courses
   const fetchCourses = async () => {
@@ -31,7 +90,7 @@ const Courses: React.FC = () => {
       const data = await res.json();
       if (data.success) setCourses(data.courses);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching courses:", err);
     } finally {
       setLoading(false);
     }
@@ -41,36 +100,46 @@ const Courses: React.FC = () => {
     fetchCourses();
   }, []);
 
-  // Delete course
-  const confirmDelete = async (id: number) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "This course will be permanently deleted!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
+  const handleSort = (key: keyof Course) => {
+    if (sortKey === key) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortOrder("asc");
+    }
+    setCurrentPage(1);
+  };
 
-    if (!result.isConfirmed) return;
+  const executeDelete = useCallback(async () => {
+    if (!courseToDelete) return;
 
     try {
       const response = await fetch(`${API_BASE}/delete-course.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id: courseToDelete }),
       });
       const res = await response.json();
+
       if (res.success) {
-        setCourses(courses.filter((c) => c.id !== id));
-        Swal.fire("Deleted!", "Course deleted successfully.", "success");
-      } else Swal.fire("Error", res.message || "Unable to delete course.", "error");
+        setCourses(courses.filter((c) => c.id !== courseToDelete));
+        showStatusNotification("Deleted!", "Course deleted successfully.", "success");
+      } else {
+        showStatusNotification("Error", res.message || "Unable to delete course.", "danger");
+      }
     } catch (error) {
       console.error(error);
-      Swal.fire("Error", "Network error while deleting course.", "error");
+      showStatusNotification("Error", "Network error while deleting course.", "danger");
+    } finally {
+      setCourseToDelete(null); 
     }
+  }, [courseToDelete, courses]);
+
+  const confirmDelete = (id: number) => {
+    setCourseToDelete(id);
+    setShowConfirmDelete(true);
   };
+
 
   // Start editing
   const handleEdit = (course: Course) => setEditingCourse(course);
@@ -92,17 +161,16 @@ const Courses: React.FC = () => {
           courses.map((c) => (c.id === editingCourse.id ? editingCourse : c))
         );
         setEditingCourse(null);
-        Swal.fire("Updated!", "Course updated successfully.", "success");
+        showStatusNotification("Updated!", "Course updated successfully.", "success");
       } else {
-        Swal.fire("Error", data.message || "Unable to update course.", "error");
+        showStatusNotification("Error", data.message || "Unable to update course.", "danger");
       }
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "Network error while updating course.", "error");
+      showStatusNotification("Error", "Network error while updating course.", "danger");
     }
   };
 
-  // Sorting + filtering + pagination
   const filteredCourses = courses.filter(
     (c) =>
       c.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -143,8 +211,12 @@ const Courses: React.FC = () => {
             <th onClick={() => handleSort("level")} style={{ cursor: "pointer" }}>
               Category {sortKey === "level" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
             </th>
-            <th>Date Created</th>
-            <th>Date Updated</th>
+            <th onClick={() => handleSort("created_at")} style={{ cursor: "pointer" }}>
+              Date Created {sortKey === "created_at" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+            </th>
+            <th onClick={() => handleSort("updated_at")} style={{ cursor: "pointer" }}>
+              Date Updated {sortKey === "updated_at" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -229,6 +301,35 @@ const Courses: React.FC = () => {
           </Button>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <CustomConfirmModal
+        show={showConfirmDelete}
+        onHide={() => setShowConfirmDelete(false)}
+        title="Confirm Deletion"
+        body="Are you sure you want to permanently delete this course?"
+        confirmText="Yes, Delete it!"
+        onConfirm={executeDelete}
+        variant="danger"
+      />
+
+      {/* Status Notification Modal */}
+      <Modal show={showNotification} onHide={() => setShowNotification(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className={`text-${notificationVariant}`}>
+            {notificationTitle}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {notificationBody}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowNotification(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 };
