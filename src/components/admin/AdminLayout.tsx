@@ -1,5 +1,6 @@
 // src/components/admin/AdminLayout.tsx
 import { Outlet, NavLink } from "react-router-dom";
+import { FaTachometerAlt, FaBook, FaUsers, FaCog } from "react-icons/fa";
 import styles from "./AdminLayout.module.css";
 
 const AdminLayout = () => {
@@ -15,6 +16,7 @@ const AdminLayout = () => {
               isActive ? `${styles.link} ${styles.active}` : styles.link
             }
           >
+            <FaTachometerAlt className={styles.icon} />
             Dashboard
           </NavLink>
           <NavLink
@@ -23,6 +25,7 @@ const AdminLayout = () => {
               isActive ? `${styles.link} ${styles.active}` : styles.link
             }
           >
+            <FaBook className={styles.icon} />
             Courses
           </NavLink>
           <NavLink
@@ -31,6 +34,7 @@ const AdminLayout = () => {
               isActive ? `${styles.link} ${styles.active}` : styles.link
             }
           >
+            <FaUsers className={styles.icon} />
             Users
           </NavLink>
           <NavLink
@@ -39,6 +43,7 @@ const AdminLayout = () => {
               isActive ? `${styles.link} ${styles.active}` : styles.link
             }
           >
+            <FaCog className={styles.icon} />
             Settings
           </NavLink>
         </nav>
