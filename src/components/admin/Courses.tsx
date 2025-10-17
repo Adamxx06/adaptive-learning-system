@@ -1,117 +1,150 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Form, InputGroup, Pagination } from "react-bootstrap";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
 interface Course {
   id: number;
   title: string;
-  category: string;
-  instructor: string;
-  students: number;
-  date: string;
-  status: "Active" | "Inactive";
+  level: string;
+  created_at: string;
+  updated_at: string;
 }
 
-const sampleCourses: Course[] = [
-  {
-    id: 1,
-    title: "Intro to HTML",
-    category: "HTML",
-    instructor: "John Doe",
-    students: 120,
-    date: "2025-01-10",
-    status: "Active",
-  },
-  {
-    id: 2,
-    title: "Advanced CSS",
-    category: "CSS",
-    instructor: "Jane Smith",
-    students: 95,
-    date: "2025-02-14",
-    status: "Inactive",
-  },
-  {
-    id: 3,
-    title: "JavaScript Basics",
-    category: "JavaScript",
-    instructor: "Daniel Lee",
-    students: 200,
-    date: "2025-03-05",
-    status: "Active",
-  },
-];
-
 const Courses: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>(sampleCourses);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<keyof Course>("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [loading, setLoading] = useState(true);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
 
-  // Filtering
+  const API_BASE = "http://localhost/codeadapt-backend/api";
+
+  // Fetch courses
+  const fetchCourses = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/get-courses.php`);
+      const data = await res.json();
+      if (data.success) setCourses(data.courses);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  // Delete course
+  const confirmDelete = async (id: number) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This course will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/delete-course.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const res = await response.json();
+      if (res.success) {
+        setCourses(courses.filter((c) => c.id !== id));
+        Swal.fire("Deleted!", "Course deleted successfully.", "success");
+      } else Swal.fire("Error", res.message || "Unable to delete course.", "error");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Network error while deleting course.", "error");
+    }
+  };
+
+  // Start editing
+  const handleEdit = (course: Course) => setEditingCourse(course);
+
+  // Save edit
+  const saveEdit = async () => {
+    if (!editingCourse) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/update_course.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editingCourse),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setCourses(
+          courses.map((c) => (c.id === editingCourse.id ? editingCourse : c))
+        );
+        setEditingCourse(null);
+        Swal.fire("Updated!", "Course updated successfully.", "success");
+      } else {
+        Swal.fire("Error", data.message || "Unable to update course.", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Network error while updating course.", "error");
+    }
+  };
+
+  // Sorting + filtering + pagination
   const filteredCourses = courses.filter(
     (c) =>
       c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.category.toLowerCase().includes(search.toLowerCase())
+      c.level.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Sorting
   const sortedCourses = [...filteredCourses].sort((a, b) => {
     if (a[sortKey] < b[sortKey]) return sortOrder === "asc" ? -1 : 1;
     if (a[sortKey] > b[sortKey]) return sortOrder === "asc" ? 1 : -1;
     return 0;
   });
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentCourses = sortedCourses.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(sortedCourses.length / itemsPerPage);
 
-  const handleSort = (key: keyof Course) => {
-    if (sortKey === key) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
+  if (loading) return <p>Loading courses...</p>;
 
   return (
     <div>
       <h2 className="mb-3">Courses Management</h2>
 
-      {/* Search */}
       <InputGroup className="mb-3">
         <Form.Control
           placeholder="Search courses..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button variant="primary">Search</Button>
       </InputGroup>
 
-      {/* Table */}
       <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th onClick={() => handleSort("title")} style={{ cursor: "pointer" }}>
               Title {sortKey === "title" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
             </th>
-            <th onClick={() => handleSort("category")} style={{ cursor: "pointer" }}>
-              Category {sortKey === "category" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+            <th onClick={() => handleSort("level")} style={{ cursor: "pointer" }}>
+              Category {sortKey === "level" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
             </th>
-            <th>Instructor</th>
-            <th onClick={() => handleSort("students")} style={{ cursor: "pointer" }}>
-              Students {sortKey === "students" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-            </th>
-            <th onClick={() => handleSort("date")} style={{ cursor: "pointer" }}>
-              Date {sortKey === "date" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-            </th>
-            <th>Status</th>
+            <th>Date Created</th>
+            <th>Date Updated</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -119,27 +152,22 @@ const Courses: React.FC = () => {
           {currentCourses.map((course) => (
             <tr key={course.id}>
               <td>{course.title}</td>
-              <td>{course.category}</td>
-              <td>{course.instructor}</td>
-              <td>{course.students}</td>
-              <td>{course.date}</td>
+              <td>{course.level}</td>
+              <td>{new Date(course.created_at).toLocaleDateString()}</td>
+              <td>{new Date(course.updated_at).toLocaleDateString()}</td>
               <td>
-                <span
-                  className={`badge ${
-                    course.status === "Active" ? "bg-success" : "bg-secondary"
-                  }`}
+                <Button
+                  size="sm"
+                  variant="warning"
+                  className="me-2"
+                  onClick={() => handleEdit(course)}
                 >
-                  {course.status}
-                </span>
-              </td>
-              <td>
-                <Button size="sm" variant="warning" className="me-2">
                   Edit
                 </Button>
                 <Button
                   size="sm"
                   variant="danger"
-                  onClick={() => setCourses(courses.filter((c) => c.id !== course.id))}
+                  onClick={() => confirmDelete(course.id)}
                 >
                   Delete
                 </Button>
@@ -149,7 +177,6 @@ const Courses: React.FC = () => {
         </tbody>
       </Table>
 
-      {/* Pagination */}
       <Pagination>
         <Pagination.Prev
           disabled={currentPage === 1}
@@ -170,10 +197,38 @@ const Courses: React.FC = () => {
         />
       </Pagination>
 
-      {/* Add Course */}
-      <Button variant="success" className="mt-3">
-        + Add Course
-      </Button>
+      {/* Edit Form */}
+      {editingCourse && (
+        <div className="card p-4 shadow mt-4">
+          <h4 className="mb-3 text-primary">Edit Course</h4>
+          <Form.Group className="mb-3">
+            <Form.Label>Title</Form.Label>
+            <Form.Control
+              type="text"
+              value={editingCourse.title}
+              onChange={(e) =>
+                setEditingCourse({ ...editingCourse, title: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Category</Form.Label>
+            <Form.Control
+              type="text"
+              value={editingCourse.level}
+              onChange={(e) =>
+                setEditingCourse({ ...editingCourse, level: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Button variant="success" className="me-2" onClick={saveEdit}>
+            Save
+          </Button>
+          <Button variant="secondary" onClick={() => setEditingCourse(null)}>
+            Cancel
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
