@@ -19,6 +19,7 @@ import Contact from "./components/pages/Contact";
 import TermsOfService from "./components/pages/Terms";
 import TopicsPage from "./components/pages/TopicsPage";
 import QuizPage from "./components/QuizPage";
+import VerifyEmail from "./components/pages/VerifyEmail"; // ✅ New import
 
 // Pages (Admin)
 import Dashboard from "./components/admin/Dashboard";
@@ -49,6 +50,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
+
+  <Route path="/verify-email" element={<VerifyEmail />} />
+
 
         {/* Protected User Routes */}
         <Route element={<UserRoute />}>
