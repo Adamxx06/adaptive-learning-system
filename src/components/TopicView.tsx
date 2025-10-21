@@ -37,7 +37,11 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
   const [wrongQuestions, setWrongQuestions] = useState<Question[]>([]);
   const [score, setScore] = useState<number | null>(null);
   const [attempts, setAttempts] = useState<number>(0);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
+  const MIN_SCORE = 4; // Minimum score to unlock next topic
+
+  // Load topic and quiz
   useEffect(() => {
     let cancelled = false;
     setTopic(null);
@@ -86,6 +90,29 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
     };
   }, [topicId]);
 
+  // Load saved unlock progress from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(`topicProgress_${topicId}`);
+    if (saved) {
+      const { unlocked } = JSON.parse(saved);
+      setIsUnlocked(unlocked);
+    } else {
+      setIsUnlocked(false);
+    }
+  }, [topicId]);
+
+  // Save progress automatically when score changes
+  useEffect(() => {
+    if (score !== null) {
+      const unlocked = score >= MIN_SCORE;
+      localStorage.setItem(
+        `topicProgress_${topicId}`,
+        JSON.stringify({ score, unlocked })
+      );
+      setIsUnlocked(unlocked);
+    }
+  }, [score, topicId]);
+
   const handleSelectAnswer = (questionId: number, answer: string) => {
     if (score === null) {
       setUserAnswers((prev) => ({ ...prev, [questionId]: answer }));
@@ -125,6 +152,38 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
     setAttempts(0);
   };
 
+  // 🔹 Study reference materials by topic
+  const getStudyLinks = () => {
+    if (!topic) return [];
+
+    const title = topic.title.toLowerCase();
+    if (title.includes("html"))
+      return [
+        { name: "MDN HTML Guide", url: "https://developer.mozilla.org/en-US/docs/Web/HTML" },
+        { name: "W3Schools HTML Tutorial", url: "https://www.w3schools.com/html/" },
+        { name: "freeCodeCamp HTML", url: "https://www.freecodecamp.org/learn/" },
+      ];
+    if (title.includes("css"))
+      return [
+        { name: "MDN CSS Reference", url: "https://developer.mozilla.org/en-US/docs/Web/CSS" },
+        { name: "W3Schools CSS Tutorial", url: "https://www.w3schools.com/css/" },
+        { name: "CSS Tricks", url: "https://css-tricks.com/guides/" },
+      ];
+    if (title.includes("javascript") || title.includes("js"))
+      return [
+        { name: "MDN JavaScript Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" },
+        { name: "W3Schools JS Tutorial", url: "https://www.w3schools.com/js/" },
+        { name: "freeCodeCamp JS", url: "https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/" },
+      ];
+
+    // Default fallback for any topic
+    return [
+      { name: "W3Schools Web Tutorials", url: "https://www.w3schools.com/" },
+      { name: "freeCodeCamp", url: "https://www.freecodecamp.org/learn/" },
+      { name: "MDN Web Docs", url: "https://developer.mozilla.org/en-US/" },
+    ];
+  };
+
   if (!topic)
     return (
       <div className="p-5 text-center text-muted">
@@ -133,10 +192,11 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
       </div>
     );
 
-  // Determine current index for prev/next enabling
   const currentIndex = topics.findIndex((t) => t.id === topicId);
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < topics.length - 1;
+
+  const studyLinks = getStudyLinks();
 
   return (
     <div
@@ -151,6 +211,7 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
           {topic.title}
         </h1>
 
+        {/* Topic Overview */}
         <section className="mb-5 p-4 bg-white rounded-4 shadow-sm border-start border-4 border-primary">
           <h2 className="h4 text-primary mb-3">Topic Overview</h2>
           <p style={{ whiteSpace: "pre-line", lineHeight: 1.8, fontSize: "1.05rem", color: "#222" }}>
@@ -158,6 +219,7 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
           </p>
         </section>
 
+        {/* Code Snippet */}
         {topic.code_snippet && (
           <section className="mb-5">
             <h2 className="h5 text-secondary mb-3">Code Example</h2>
@@ -178,10 +240,7 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
         {/* Quiz Section */}
         {quiz && (
           <section className="card border-0 shadow-lg rounded-4 overflow-hidden">
-            <div
-              className="card-header text-white"
-              style={{ background: "linear-gradient(90deg, #0b132b, #1d3557, #457b9d)" }}
-            >
+            <div className="card-header text-white" style={{ background: "linear-gradient(90deg, #0b132b, #1d3557, #457b9d)" }}>
               <h3 className="h5 mb-0 fw-semibold">{quiz.title || "Knowledge Check Quiz"}</h3>
             </div>
 
@@ -224,7 +283,8 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
                           if (showFeedback) {
                             if (opt === q.correct_answer)
                               btnClass = "btn btn-success text-white text-start fw-bold shadow-sm";
-                            else if (isSelected) btnClass = "btn btn-danger text-white text-start shadow-sm";
+                            else if (isSelected)
+                              btnClass = "btn btn-danger text-white text-start shadow-sm";
                           } else if (isSelected) btnClass = "btn btn-info text-white text-start shadow";
 
                           return (
@@ -234,9 +294,7 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
                               onClick={() => handleSelectAnswer(q.id, opt)}
                               disabled={score !== null}
                             >
-                              {showFeedback && opt === q.correct_answer && (
-                                <i className="bi bi-check-circle-fill me-2" />
-                              )}
+                              {showFeedback && opt === q.correct_answer && <i className="bi bi-check-circle-fill me-2" />}
                               {opt}
                             </button>
                           );
@@ -246,8 +304,7 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
                       {showFeedback && !isCorrect && q.explanation && (
                         <div className="mt-3 p-3 bg-light border-start border-3 border-danger rounded-3">
                           <p className="fw-bold mb-1 text-danger">
-                            <i className="bi bi-x-circle-fill me-1" />
-                            Explanation:
+                            <i className="bi bi-x-circle-fill me-1" /> Explanation:
                           </p>
                           <p className="mb-0">{q.explanation}</p>
                         </div>
@@ -274,13 +331,49 @@ export default function TopicView({ topicId, topics, onNavigate }: Props) {
           </section>
         )}
 
-        {/* Navigation Buttons */}
+        {/* 🔹 Study Resources if score < MIN_SCORE */}
+        {score !== null && score < MIN_SCORE && studyLinks.length > 0 && (
+          <div className="mt-5 p-4 bg-warning-subtle border-start border-4 border-warning rounded-4 shadow-sm">
+            <h4 className="text-warning fw-bold mb-3">
+              <i className="bi bi-lightbulb-fill me-2"></i>
+              Recommended Study Materials
+            </h4>
+            <ul className="list-unstyled mb-0">
+              {studyLinks.map((link) => (
+                <li key={link.url} className="mb-2">
+                  <a href={link.url} target="_blank" rel="noopener noreferrer" className="fw-semibold text-decoration-none text-dark">
+                    🔗 {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-secondary fst-italic">
+              Review these materials, then retry the quiz. You need at least {MIN_SCORE} to unlock the next topic.
+            </p>
+          </div>
+        )}
+
+        {/* 🔹 Success message if score >= MIN_SCORE */}
+        {score !== null && score >= MIN_SCORE && (
+          <p className="text-success text-center mt-3 fw-semibold">
+            ✅ Congratulations! You’ve unlocked the next topic.
+          </p>
+        )}
+
+        {/* 🔹 Lock message if score < MIN_SCORE */}
+        {score !== null && score < MIN_SCORE && (
+          <p className="text-danger text-center mt-3 fw-semibold">
+            ❌ You need at least {MIN_SCORE} correct answers to unlock the next topic.
+          </p>
+        )}
+
+        {/* Navigation */}
         <div className="d-flex justify-content-between align-items-center mt-5">
           <button onClick={() => onNavigate("prev")} className="btn btn-outline-secondary rounded-pill px-4" disabled={!hasPrev}>
             <i className="bi bi-arrow-left-circle me-2" /> Previous Topic
           </button>
 
-          <button onClick={() => onNavigate("next")} className="btn btn-primary rounded-pill px-4" disabled={!hasNext}>
+          <button onClick={() => onNavigate("next")} className="btn btn-primary rounded-pill px-4" disabled={!hasNext || !isUnlocked}>
             Next Topic <i className="bi bi-arrow-right-circle ms-2" />
           </button>
         </div>
