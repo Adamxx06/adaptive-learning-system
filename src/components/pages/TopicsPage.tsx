@@ -4,10 +4,11 @@ import TopicView from "../../components/TopicView";
 import { useParams, useLocation } from "react-router-dom";
 import { listTopics } from "../../services/api";
 
+type Topic = { id: number; title: string };
+
 export default function TopicsPage() {
   const location = useLocation();
   const { courseId: courseIdParam } = useParams<{ courseId: string }>();
-  // courseId will be null if no param present
   const courseId = courseIdParam ? parseInt(courseIdParam, 10) : null;
 
   const navState: any = location.state ?? {};
@@ -16,40 +17,57 @@ export default function TopicsPage() {
       ? navState.initialTopicId
       : null;
 
-  const [topics, setTopics] = useState<{ id: number; title: string }[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(
     initialTopicIdFromNav
   );
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loadingTopics, setLoadingTopics] = useState(true);
 
-  // Fetch topics list once (when courseId changes)
-useEffect(() => {
-  if (courseId === null || isNaN(courseId)) return;
+  // Track unlock status of current topic
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
-  async function fetchTopics() {
-    setLoadingTopics(true);
-    try {
-      const data = await listTopics(courseId as number);
-      if (data && data.length > 0) {
-        setTopics(data);
-        if (!selectedTopicId) setSelectedTopicId(data[0].id);
+  // Fetch topics list
+  useEffect(() => {
+    if (courseId === null || isNaN(courseId)) return;
+
+    async function fetchTopics() {
+      setLoadingTopics(true);
+      try {
+        const data = await listTopics(courseId);
+        if (data && data.length > 0) {
+          setTopics(data);
+          if (selectedTopicId === null) {
+            setSelectedTopicId(data[0].id); // ✅ guaranteed number
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching topics:", err);
+      } finally {
+        setLoadingTopics(false);
       }
-    } catch (err) {
-      console.error("Error fetching topics:", err);
-    } finally {
-      setLoadingTopics(false);
     }
-  }
 
-  fetchTopics();
-}, [courseId]);
-
+    fetchTopics();
+  }, [courseId]);
 
   // Close sidebar on mobile after topic selection
   useEffect(() => {
     if (selectedTopicId !== null && window.innerWidth < 992) {
       setIsSidebarOpen(false);
+    }
+  }, [selectedTopicId]);
+
+  // Read topic unlock status from localStorage
+  useEffect(() => {
+    if (selectedTopicId === null) return;
+
+    const saved = localStorage.getItem(`topicProgress_${selectedTopicId}`);
+    if (saved) {
+      const { unlocked } = JSON.parse(saved);
+      setIsUnlocked(!!unlocked);
+    } else {
+      setIsUnlocked(false);
     }
   }, [selectedTopicId]);
 
@@ -64,7 +82,7 @@ useEffect(() => {
     );
   }
 
-  // Parent-controlled next / prev that uses the actual ordering in `topics`
+  // Parent-controlled next / prev
   const handleNextPrev = (direction: "next" | "prev") => {
     if (!topics.length || selectedTopicId === null) return;
 
@@ -87,7 +105,11 @@ useEffect(() => {
           onClick={toggleSidebar}
           aria-expanded={isSidebarOpen}
         >
-          <i className={`bi ${isSidebarOpen ? "bi-x-lg" : "bi-list-ul"} me-2`} />
+          <i
+            className={`bi ${
+              isSidebarOpen ? "bi-x-lg" : "bi-list-ul"
+            } me-2`}
+          />
           {isSidebarOpen ? "Hide Topics" : "Show Topics"}
         </button>
       </div>
@@ -100,18 +122,23 @@ useEffect(() => {
         style={{ width: "100%", maxWidth: "320px" }}
       >
         <div className="d-flex flex-column vh-100 sticky-top overflow-auto">
-          {!loadingTopics && topics.length > 0 && (
+          {!loadingTopics && topics.length > 0 && selectedTopicId !== null && (
             <TopicsSidebar
-              courseId={courseId!} // courseId is non-null here due to earlier guard
+              courseId={courseId} // ✅ number
               topics={topics}
-              activeTopicId={selectedTopicId}
-              onSelect={(id) => setSelectedTopicId(id)}
+              activeTopicId={selectedTopicId} // ✅ number
+              onSelect={(id: number) => setSelectedTopicId(id)}
+              isUnlocked={isUnlocked} // ✅ boolean
             />
           )}
 
-          {loadingTopics && <div className="p-4 text-center text-muted">Loading topics…</div>}
+          {loadingTopics && (
+            <div className="p-4 text-center text-muted">Loading topics…</div>
+          )}
           {!loadingTopics && topics.length === 0 && (
-            <div className="p-4 text-center text-muted">No topics found for this course.</div>
+            <div className="p-4 text-center text-muted">
+              No topics found for this course.
+            </div>
           )}
         </div>
       </aside>
@@ -120,7 +147,7 @@ useEffect(() => {
       <main className="flex-grow-1 p-4 p-lg-5 overflow-auto">
         {selectedTopicId !== null && topics.length > 0 ? (
           <TopicView
-            topicId={selectedTopicId}
+            topicId={selectedTopicId} // ✅ guaranteed number
             onNavigate={handleNextPrev}
             topics={topics}
           />

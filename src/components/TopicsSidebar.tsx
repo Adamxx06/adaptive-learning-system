@@ -7,39 +7,41 @@ type Topic = {
 };
 
 type Props = {
-  courseId: number; // still available if you need it for context; unused here
+  courseId: number;
   topics: Topic[];
   activeTopicId: number | null;
   onSelect: (id: number) => void;
+  isUnlocked: boolean; // controls access to next topics
 };
 
 export default function TopicsSidebar({
   topics,
   activeTopicId,
   onSelect,
+  isUnlocked,
 }: Props) {
   const activeRef = useRef<HTMLLIElement | null>(null);
-  const listRef = useRef<HTMLUListElement | null>(null);
 
-  // scroll active into view when activeTopicId changes
+  // Scroll active topic into view
   useEffect(() => {
     if (activeRef.current) {
-      activeRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      activeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [activeTopicId]);
 
-  if (!topics || topics.length === 0)
+  if (!topics.length)
     return <div className="p-4 text-center text-muted">No topics found.</div>;
+
+  const activeIndex = topics.findIndex((t) => t.id === activeTopicId);
 
   return (
     <div className="p-4">
       <h5 className="fw-bolder mb-4 text-primary">COURSE TOPICS</h5>
-      <ul className="list-unstyled" ref={listRef}>
-        {topics.map((t) => {
+      <ul className="list-unstyled">
+        {topics.map((t, index) => {
           const isActive = t.id === activeTopicId;
+          const isDisabled = !isUnlocked && index > activeIndex;
+
           return (
             <li
               key={t.id}
@@ -47,10 +49,12 @@ export default function TopicsSidebar({
               className={`p-2 mb-2 rounded transition-colors ${
                 isActive
                   ? "bg-primary text-white shadow-sm fw-bold"
+                  : isDisabled
+                  ? "text-muted cursor-not-allowed"
                   : "text-dark hover-bg-light-primary"
               }`}
-              style={{ cursor: "pointer" }}
-              onClick={() => onSelect(t.id)}
+              style={{ cursor: isDisabled ? "not-allowed" : "pointer" }}
+              onClick={() => !isDisabled && onSelect(t.id)}
               role="button"
               aria-pressed={isActive}
             >
