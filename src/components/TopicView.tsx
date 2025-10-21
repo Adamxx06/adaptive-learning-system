@@ -23,7 +23,13 @@ type Quiz = {
   questions: Question[];
 };
 
-export default function TopicView({ topicId }: { topicId: number }) {
+type Props = {
+  topicId: number;
+  topics: { id: number; title: string }[];
+  onNavigate: (direction: "next" | "prev") => void;
+};
+
+export default function TopicView({ topicId, topics, onNavigate }: Props) {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>([]);
@@ -53,13 +59,23 @@ export default function TopicView({ topicId }: { topicId: number }) {
             setQuiz(quizData);
             setOriginalQuestions(quizData.questions);
           } else {
-            setQuiz({ id: 0, topic_id: topicId, title: "No Quiz Available", questions: [] });
+            setQuiz({
+              id: 0,
+              topic_id: topicId,
+              title: "No Quiz Available",
+              questions: [],
+            });
           }
         }
       } catch (err) {
         console.error("Error fetching topic or quiz:", err);
         if (!cancelled) {
-          setQuiz({ id: 0, topic_id: topicId, title: "No Quiz Available", questions: [] });
+          setQuiz({
+            id: 0,
+            topic_id: topicId,
+            title: "No Quiz Available",
+            questions: [],
+          });
         }
       }
     }
@@ -112,10 +128,15 @@ export default function TopicView({ topicId }: { topicId: number }) {
   if (!topic)
     return (
       <div className="p-5 text-center text-muted">
-        <div className="spinner-border text-primary mb-3" role="status"></div>
+        <div className="spinner-border text-primary mb-3" role="status" />
         <p>Loading topic…</p>
       </div>
     );
+
+  // Determine current index for prev/next enabling
+  const currentIndex = topics.findIndex((t) => t.id === topicId);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < topics.length - 1;
 
   return (
     <div
@@ -126,35 +147,24 @@ export default function TopicView({ topicId }: { topicId: number }) {
       }}
     >
       <div className="container-lg">
-        {/* Topic Title */}
         <h1 className="display-5 fw-bold mb-4 text-center text-primary">
           {topic.title}
         </h1>
 
-        {/* Topic Overview */}
         <section className="mb-5 p-4 bg-white rounded-4 shadow-sm border-start border-4 border-primary">
           <h2 className="h4 text-primary mb-3">Topic Overview</h2>
-          <p
-            style={{
-              whiteSpace: "pre-line",
-              lineHeight: 1.8,
-              fontSize: "1.05rem",
-              color: "#222",
-            }}
-          >
+          <p style={{ whiteSpace: "pre-line", lineHeight: 1.8, fontSize: "1.05rem", color: "#222" }}>
             {topic.content}
           </p>
         </section>
 
-        {/* Code Example */}
         {topic.code_snippet && (
           <section className="mb-5">
             <h2 className="h5 text-secondary mb-3">Code Example</h2>
             <pre
               className="p-4 rounded-4 text-light shadow-lg"
               style={{
-                background:
-                  "linear-gradient(135deg, #001f3f, #012a63, #023e8a)",
+                background: "linear-gradient(135deg, #001f3f, #012a63, #023e8a)",
                 overflowX: "auto",
                 fontSize: "0.95rem",
                 border: "none",
@@ -170,38 +180,25 @@ export default function TopicView({ topicId }: { topicId: number }) {
           <section className="card border-0 shadow-lg rounded-4 overflow-hidden">
             <div
               className="card-header text-white"
-              style={{
-                background:
-                  "linear-gradient(90deg, #0b132b, #1d3557, #457b9d)",
-              }}
+              style={{ background: "linear-gradient(90deg, #0b132b, #1d3557, #457b9d)" }}
             >
-              <h3 className="h5 mb-0 fw-semibold">
-                {quiz.title || "Knowledge Check Quiz"}
-              </h3>
+              <h3 className="h5 mb-0 fw-semibold">{quiz.title || "Knowledge Check Quiz"}</h3>
             </div>
 
             <div className="card-body p-4 p-lg-5">
               <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <p className="lead fw-bold mb-0 text-dark">
-                  {score !== null
-                    ? `Your Score: ${score} / ${quiz.questions.length}`
-                    : `Attempt: ${attempts + 1}`}
+                  {score !== null ? `Your Score: ${score} / ${quiz.questions.length}` : `Attempt: ${attempts + 1}`}
                 </p>
                 {score !== null && (
                   <div>
                     {wrongQuestions.length > 0 && (
-                      <button
-                        onClick={handleRetryWrong}
-                        className="btn btn-outline-warning btn-sm fw-bold me-2"
-                      >
-                        <i className="bi bi-arrow-repeat me-1"></i> Retry Wrong
+                      <button onClick={handleRetryWrong} className="btn btn-outline-warning btn-sm fw-bold me-2">
+                        <i className="bi bi-arrow-repeat me-1" /> Retry Wrong
                       </button>
                     )}
-                    <button
-                      onClick={handleRetryFullQuiz}
-                      className="btn btn-outline-primary btn-sm fw-bold"
-                    >
-                      <i className="bi bi-arrow-repeat me-1"></i> Retry All
+                    <button onClick={handleRetryFullQuiz} className="btn btn-outline-primary btn-sm fw-bold">
+                      <i className="bi bi-arrow-repeat me-1" /> Retry All
                     </button>
                   </div>
                 )}
@@ -213,10 +210,7 @@ export default function TopicView({ topicId }: { topicId: number }) {
                   const showFeedback = score !== null;
 
                   return (
-                    <div
-                      key={q.id}
-                      className="mb-4 p-4 border rounded-4 bg-white shadow-sm"
-                    >
+                    <div key={q.id} className="mb-4 p-4 border rounded-4 bg-white shadow-sm">
                       <p className="fw-semibold mb-3 text-dark">
                         <span className="badge bg-primary me-2">Q{i + 1}</span>
                         {q.question}
@@ -229,28 +223,20 @@ export default function TopicView({ topicId }: { topicId: number }) {
 
                           if (showFeedback) {
                             if (opt === q.correct_answer)
-                              btnClass =
-                                "btn btn-success text-white text-start fw-bold shadow-sm";
-                            else if (isSelected)
-                              btnClass =
-                                "btn btn-danger text-white text-start shadow-sm";
-                          } else if (isSelected)
-                            btnClass =
-                              "btn btn-info text-white text-start shadow";
+                              btnClass = "btn btn-success text-white text-start fw-bold shadow-sm";
+                            else if (isSelected) btnClass = "btn btn-danger text-white text-start shadow-sm";
+                          } else if (isSelected) btnClass = "btn btn-info text-white text-start shadow";
 
                           return (
                             <button
                               key={opt}
                               className={`${btnClass} text-wrap`}
-                              onClick={() =>
-                                handleSelectAnswer(q.id, opt)
-                              }
+                              onClick={() => handleSelectAnswer(q.id, opt)}
                               disabled={score !== null}
                             >
-                              {showFeedback &&
-                                opt === q.correct_answer && (
-                                  <i className="bi bi-check-circle-fill me-2"></i>
-                                )}
+                              {showFeedback && opt === q.correct_answer && (
+                                <i className="bi bi-check-circle-fill me-2" />
+                              )}
                               {opt}
                             </button>
                           );
@@ -260,7 +246,7 @@ export default function TopicView({ topicId }: { topicId: number }) {
                       {showFeedback && !isCorrect && q.explanation && (
                         <div className="mt-3 p-3 bg-light border-start border-3 border-danger rounded-3">
                           <p className="fw-bold mb-1 text-danger">
-                            <i className="bi bi-x-circle-fill me-1"></i>
+                            <i className="bi bi-x-circle-fill me-1" />
                             Explanation:
                           </p>
                           <p className="mb-0">{q.explanation}</p>
@@ -270,9 +256,7 @@ export default function TopicView({ topicId }: { topicId: number }) {
                   );
                 })
               ) : (
-                <p className="text-muted text-center">
-                  No quiz available for this topic.
-                </p>
+                <p className="text-muted text-center">No quiz available for this topic.</p>
               )}
 
               {quiz.questions.length > 0 && score === null && (
@@ -280,17 +264,26 @@ export default function TopicView({ topicId }: { topicId: number }) {
                   <button
                     onClick={handleSubmitQuiz}
                     className="btn btn-primary btn-lg shadow-lg rounded-pill px-4"
-                    disabled={
-                      Object.keys(userAnswers).length !== quiz.questions.length
-                    }
+                    disabled={Object.keys(userAnswers).length !== quiz.questions.length}
                   >
-                    Submit Quiz <i className="bi bi-send-fill ms-2"></i>
+                    Submit Quiz <i className="bi bi-send-fill ms-2" />
                   </button>
                 </div>
               )}
             </div>
           </section>
         )}
+
+        {/* Navigation Buttons */}
+        <div className="d-flex justify-content-between align-items-center mt-5">
+          <button onClick={() => onNavigate("prev")} className="btn btn-outline-secondary rounded-pill px-4" disabled={!hasPrev}>
+            <i className="bi bi-arrow-left-circle me-2" /> Previous Topic
+          </button>
+
+          <button onClick={() => onNavigate("next")} className="btn btn-primary rounded-pill px-4" disabled={!hasNext}>
+            Next Topic <i className="bi bi-arrow-right-circle ms-2" />
+          </button>
+        </div>
       </div>
     </div>
   );
