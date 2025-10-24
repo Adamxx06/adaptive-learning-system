@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-
+import "../app.css"
 
 const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -17,8 +17,6 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-xl navbar-light bg-light shadow-sm position-relative">
       <div className="container position-relative">
-
-
         {/* Brand Logo */}
         <Link
           className="navbar-brand fw-bold position-relative z-3"
@@ -67,24 +65,48 @@ const Navbar = () => {
         <div className="collapse navbar-collapse d-none d-xl-flex" id="navbarNav">
           <ul className="navbar-nav ms-auto align-items-lg-center">
             <li className="nav-item me-lg-4">
-              <Link className="nav-link" to="/courses" onClick={() => setMenuOpen(false)}>
+              <NavLink
+                to="/courses"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active-link" : ""}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
                 Courses
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item me-lg-4">
-              <Link className="nav-link" to="/about" onClick={() => setMenuOpen(false)}>
+              <NavLink
+                to="/about"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active-link" : ""}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
                 About Us
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item me-lg-4">
-              <Link className="nav-link" to="/contact" onClick={() => setMenuOpen(false)}>
+              <NavLink
+                to="/contact"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active-link" : ""}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
                 Contact
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item me-lg-4">
-              <Link className="nav-link" to="/terms-of-service" onClick={() => setMenuOpen(false)}>
+              <NavLink
+                to="/terms-of-service"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active-link" : ""}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
                 Terms of Service
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item me-lg-4"></li> {/* Spacer */}
             <li className="nav-item">
@@ -134,14 +156,21 @@ const Navbar = () => {
             <ul className="navbar-nav flex-column p-0" style={{ width: "100%" }}>
               {["courses", "about", "contact", "terms-of-service"].map((path) => (
                 <li className="nav-item mb-3" key={path}>
-                  <Link
-                    className="nav-link"
+                  <NavLink
+                    className={({ isActive }) =>
+                      `nav-link ${isActive ? "active-link" : ""}`
+                    }
                     to={`/${path}`}
                     onClick={() => setMenuOpen(false)}
-                    style={{ fontSize: "1.3rem", padding: "1rem 0", width: "100%", borderBottom: "none" }}
+                    style={{
+                      fontSize: "1.3rem",
+                      padding: "1rem 0",
+                      width: "100%",
+                      borderBottom: "none",
+                    }}
                   >
                     {path.charAt(0).toUpperCase() + path.slice(1).replace("-", " ")}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
               <li className="nav-item mb-3" style={{ width: "100%" }}>
