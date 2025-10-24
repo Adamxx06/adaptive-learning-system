@@ -82,15 +82,14 @@ const Home = () => {
     AOS.init({ duration: 1000, once: true });
   }, []);
 
-const handleStartCourse = (courseName: string, courseId: number) => {
-  const availableCourses = [1, 2, 3, 4, 5, 6]; // IDs of courses that exist in your DB
-  if (availableCourses.includes(courseId)) {
-    navigate(`/courses/${courseId}/topics`);
-  } else {
-    alert(`${courseName} course is coming soon!`);
-  }
-};
-
+  const handleStartCourse = (courseName: string, courseId: number) => {
+    const availableCourses = [1, 2, 3, 4, 5, 6]; // IDs of courses that exist in your DB
+    if (availableCourses.includes(courseId)) {
+      navigate(`/courses/${courseId}/topics`);
+    } else {
+      alert(`${courseName} course is coming soon!`);
+    }
+  };
 
   return (
     <>
@@ -112,8 +111,18 @@ const handleStartCourse = (courseName: string, courseId: number) => {
                 Master coding with adaptive learning. Build real projects, track your progress, and become job-ready with a supportive community by your side.
               </p>
               <div className="d-grid gap-2 d-xl-flex justify-content-xl-start">
-                <button className="btn-modern btn-signup mb-xl-0 mb-2">Sign Up</button>
-                <button className="btn-modern btn-signin mb-5 mb-xl-0">Sign In</button>
+                <button
+                  className="btn-modern btn-signup mb-xl-0 mb-2"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign Up
+                </button>
+                <button
+                  className="btn-modern btn-signin mb-5 mb-xl-0"
+                  onClick={() => navigate("/signin")}
+                >
+                  Sign In
+                </button>
               </div>
             </div>
             <div className="col-xl-6 col-md-6 col-sm-12" data-aos="fade-left">
@@ -127,46 +136,44 @@ const handleStartCourse = (courseName: string, courseId: number) => {
         </div>
       </section>
 
-    {/* Trusted By Section */}
-<section className="py-5 bg-white border-top border-bottom">
-  <div className="container text-center">
-    <h2 className="fw-bold mb-4" data-aos="fade-up">
-      Trusted by Top Companies
-    </h2>
-    <p className="text-muted mb-5" data-aos="fade-up" data-aos-delay="100">
-      We collaborate with global tech leaders and educational partners.
-    </p>
+      {/* Trusted By Section */}
+      <section className="py-5 bg-white border-top border-bottom">
+        <div className="container text-center">
+          <h2 className="fw-bold mb-4" data-aos="fade-up">
+            Trusted by Top Companies
+          </h2>
+          <p className="text-muted mb-5" data-aos="fade-up" data-aos-delay="100">
+            We collaborate with global tech leaders and educational partners.
+          </p>
 
-    <div className="row justify-content-center align-items-center g-4" data-aos="fade-up" data-aos-delay="200">
-      {[
-        { name: "Google", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
-        { name: "Microsoft", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
-        { name: "Amazon", img: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
-        { name: "Meta", img: "https://upload.wikimedia.org/wikipedia/commons/0/05/Meta_Platforms_Inc._logo.svg" },
-        { name: "IBM", img: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" },
-      ].map((company, i) => (
-        <div key={i} className="col-6 col-md-2 col-lg-2">
-          <img
-            src={company.img}
-            alt={company.name}
-            className="img-fluid"
-            style={{ maxHeight: "40px", filter: "grayscale(100%)", opacity: 0.8 }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLImageElement).style.filter = "grayscale(0%)";
-              (e.currentTarget as HTMLImageElement).style.opacity = "1";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLImageElement).style.filter = "grayscale(100%)";
-              (e.currentTarget as HTMLImageElement).style.opacity = "0.8";
-            }}
-          />
+          <div className="row justify-content-center align-items-center g-4" data-aos="fade-up" data-aos-delay="200">
+            {[
+              { name: "Google", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
+              { name: "Microsoft", img: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
+              { name: "Amazon", img: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
+              { name: "Meta", img: "https://upload.wikimedia.org/wikipedia/commons/0/05/Meta_Platforms_Inc._logo.svg" },
+              { name: "IBM", img: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" },
+            ].map((company, i) => (
+              <div key={i} className="col-6 col-md-2 col-lg-2">
+                <img
+                  src={company.img}
+                  alt={company.name}
+                  className="img-fluid"
+                  style={{ maxHeight: "40px", filter: "grayscale(100%)", opacity: 0.8 }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.filter = "grayscale(0%)";
+                    (e.currentTarget as HTMLImageElement).style.opacity = "1";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.filter = "grayscale(100%)";
+                    (e.currentTarget as HTMLImageElement).style.opacity = "0.8";
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
-
-
+      </section>
 
       {/* How It Works (EXISTING) */}
       <section className="py-5 bg-light">
@@ -197,7 +204,6 @@ const handleStartCourse = (courseName: string, courseId: number) => {
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  {/* Icon Wrapper */}
                   <div
                     style={{
                       display: 'inline-flex',
@@ -214,7 +220,6 @@ const handleStartCourse = (courseName: string, courseId: number) => {
                   >
                     <i className={`bi ${feature.icon} fs-4`}></i>
                   </div>
-
                   <h5 className="fw-semibold">{feature.title}</h5>
                   <p className="text-muted" style={{ fontSize: '0.9rem' }}>{feature.text}</p>
                 </div>
@@ -223,85 +228,83 @@ const handleStartCourse = (courseName: string, courseId: number) => {
           </div>
         </div>
       </section>
-{/*Detailed Feature Breakdown --- */}
-<section className="py-5 bg-white">
-  <div className="container">
-    <h2 className="text-center fw-bold mb-5" data-aos="fade-up">
-      Adaptive Learning: Why CodeAdapt Works
-    </h2>
 
-    {/* Feature Block A: Personalization */}
-    <div className="row align-items-center mb-5 pb-5">
-      <div className="col-md-6" data-aos="fade-right">
-        <h3 className="fw-bold mb-3" style={{ color: '#0d6efd' }}>
-          Goodbye Frustration, Hello Flow State
-        </h3>
-        <p className="lead text-muted">
-          Our AI dynamically generates content and practice problems based on your real-time performance, ensuring you're always challenged, never overwhelmed.
-        </p>
-        <ul className="list-unstyled mt-4 text-start">
-          <li className="d-flex align-items-start mb-2">
-            <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-            <span>Targeted Quizzes to fill knowledge gaps immediately.</span>
-          </li>
-          <li className="d-flex align-items-start mb-2">
-            <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-            <span>Adaptive difficulty that scales with your mastery.</span>
-          </li>
-          <li className="d-flex align-items-start mb-2">
-            <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-            <span>Concepts repeated just enough to stick, but not bore you.</span>
-          </li>
-        </ul>
-      </div>
-      <div className="col-md-6 mt-4 mt-md-0 text-center" data-aos="fade-left">
-        <img
-          src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Personalized Learning Chart"
-          className="img-fluid rounded-3 shadow-lg"
-          style={{ maxHeight: '500px', width: '90%', objectFit: 'cover' }}
-        />
-      </div>
-    </div>
+      {/* Detailed Feature Breakdown */}
+      <section className="py-5 bg-white">
+        <div className="container">
+          <h2 className="text-center fw-bold mb-5" data-aos="fade-up">
+            Adaptive Learning: Why CodeAdapt Works
+          </h2>
 
-    {/* Feature Block B: Practicality*/}
-    <div className="row align-items-center pt-5">
-        <div className="col-md-6 order-md-2" data-aos="fade-left">
-        <h3 className="fw-bold mb-3" style={{ color: '#0d6efd' }}>
-          Learn by Doing: Real-World Projects
-        </h3>
-        <p className="lead text-muted">
-          Theory is useless without application. Every course is built around portfolio-ready projects that mirror industry workflows, getting you job-ready faster.
-        </p>
-        <ul className="list-unstyled mt-4 text-start">
-          <li className="d-flex align-items-start mb-2">
-            <i className="bi bi-code-slash text-warning me-2 mt-1"></i>
-            <span>Integrated development environment (IDE) practice.</span>
-          </li>
-          <li className="d-flex align-items-start mb-2">
-            <i className="bi bi-clipboard-check-fill text-warning me-2 mt-1"></i>
-            <span>Code reviews and feedback loops from mentors.</span>
-          </li>
-          <li className="d-flex align-items-start mb-2">
-            <i className="bi bi-briefcase-fill text-warning me-2 mt-1"></i>
-            <span>Projects designed to pass technical interviews.</span>
-          </li>
-        </ul>
-      </div>
-      <div className="col-md-6 order-md-1 mt-4 mt-md-0 text-center" data-aos="fade-right">
-        <img
-          src="https://images.pexels.com/photos/574069/pexels-photo-574069.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt="Coding terminal with hands"
-          className="img-fluid rounded-3 shadow-lg"
-          style={{ maxHeight: '500px', width: '90%', objectFit: 'cover' }}
-        />
-      </div>
-    </div>
+          <div className="row align-items-center mb-5 pb-5">
+            <div className="col-md-6" data-aos="fade-right">
+              <h3 className="fw-bold mb-3" style={{ color: '#0d6efd' }}>
+                Goodbye Frustration, Hello Flow State
+              </h3>
+              <p className="lead text-muted">
+                Our AI dynamically generates content and practice problems based on your real-time performance, ensuring you're always challenged, never overwhelmed.
+              </p>
+              <ul className="list-unstyled mt-4 text-start">
+                <li className="d-flex align-items-start mb-2">
+                  <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                  <span>Targeted Quizzes to fill knowledge gaps immediately.</span>
+                </li>
+                <li className="d-flex align-items-start mb-2">
+                  <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                  <span>Adaptive difficulty that scales with your mastery.</span>
+                </li>
+                <li className="d-flex align-items-start mb-2">
+                  <i className="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                  <span>Concepts repeated just enough to stick, but not bore you.</span>
+                </li>
+              </ul>
+            </div>
+            <div className="col-md-6 mt-4 mt-md-0 text-center" data-aos="fade-left">
+              <img
+                src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Personalized Learning Chart"
+                className="img-fluid rounded-3 shadow-lg"
+                style={{ maxHeight: '500px', width: '90%', objectFit: 'cover' }}
+              />
+            </div>
+          </div>
 
-  </div>
-</section>
+          <div className="row align-items-center pt-5">
+            <div className="col-md-6 order-md-2" data-aos="fade-left">
+              <h3 className="fw-bold mb-3" style={{ color: '#0d6efd' }}>
+                Learn by Doing: Real-World Projects
+              </h3>
+              <p className="lead text-muted">
+                Theory is useless without application. Every course is built around portfolio-ready projects that mirror industry workflows, getting you job-ready faster.
+              </p>
+              <ul className="list-unstyled mt-4 text-start">
+                <li className="d-flex align-items-start mb-2">
+                  <i className="bi bi-code-slash text-warning me-2 mt-1"></i>
+                  <span>Integrated development environment (IDE) practice.</span>
+                </li>
+                <li className="d-flex align-items-start mb-2">
+                  <i className="bi bi-clipboard-check-fill text-warning me-2 mt-1"></i>
+                  <span>Code reviews and feedback loops from mentors.</span>
+                </li>
+                <li className="d-flex align-items-start mb-2">
+                  <i className="bi bi-briefcase-fill text-warning me-2 mt-1"></i>
+                  <span>Projects designed to pass technical interviews.</span>
+                </li>
+              </ul>
+            </div>
+            <div className="col-md-6 order-md-1 mt-4 mt-md-0 text-center" data-aos="fade-right">
+              <img
+                src="https://images.pexels.com/photos/574069/pexels-photo-574069.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                alt="Coding terminal with hands"
+                className="img-fluid rounded-3 shadow-lg"
+                style={{ maxHeight: '500px', width: '90%', objectFit: 'cover' }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Courses*/}
+      {/* Courses */}
       <section className="py-5 bg-light">
         <div className="container text-center">
           <h2 className="fw-bold mb-5" data-aos="fade-up">
@@ -332,7 +335,6 @@ const handleStartCourse = (courseName: string, courseId: number) => {
                       cursor: 'pointer',
                     }}
                   >
-                    {/* Icon Container */}
                     <div
                       style={{
                         backgroundColor: styles.iconColor,
@@ -351,11 +353,11 @@ const handleStartCourse = (courseName: string, courseId: number) => {
                     </div>
 
                     <h5 className="fw-bold mb-1" style={{ color: styles.bgColor === '#20232A' ? '#FFFFFF' : '#212529' }}>
-                        {course.name}
+                      {course.name}
                     </h5>
 
                     <p className="text-muted small mb-3" style={{ fontSize: '0.8rem', color: styles.bgColor === '#20232A' ? '#ADB5BD' : '#6C757D' }}>
-                        {course.description}
+                      {course.description}
                     </p>
 
                     <button
@@ -368,11 +370,14 @@ const handleStartCourse = (courseName: string, courseId: number) => {
                         width: '100%',
                         borderRadius: '6px',
                         padding: '8px 0',
-                        boxShadow: `0 2px 4px ${styles.borderColor}88`,
+                        boxShadow: `0 2px 4px ${styles.borderColor}66`,
+                        transition: 'transform 0.2s ease',
                       }}
                       onClick={() => handleStartCourse(course.name, course.id)}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.05)')}
+                      onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)')}
                     >
-                      Start Course
+                      Start Learning
                     </button>
                   </div>
                 </div>
@@ -382,37 +387,41 @@ const handleStartCourse = (courseName: string, courseId: number) => {
         </div>
       </section>
 
-      {/* Testimonials*/}
-      <section className="py-5 bg-light">
-        <div className="container">
-          <h2 className="text-center fw-bold mb-5" data-aos="fade-up">
+      {/* Testimonials Carousel */}
+      <section className="py-5 bg-white">
+        <div className="container text-center">
+          <h2 className="fw-bold mb-5" data-aos="fade-up">
             What Our Learners Say
           </h2>
+
           <Swiper
             modules={[Autoplay, Pagination]}
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            pagination={{ clickable: true }}
             spaceBetween={30}
             slidesPerView={1}
-            pagination={{ clickable: true }}
-            autoplay={{
-              delay: 6000,
-              disableOnInteraction: false,
-              reverseDirection: false,
-            }}
             loop={true}
             breakpoints={{
               768: { slidesPerView: 2 },
-              1200: { slidesPerView: 3 },
+              1024: { slidesPerView: 3 },
             }}
+            data-aos="fade-up"
           >
             {testimonials.map((t, i) => (
               <SwiperSlide key={i}>
                 <div
-                  className="shadow-sm h-100 text-center p-4 bg-white"
-                  style={{ minHeight: "280px", borderRadius: '10px' }}
+                  className="p-4 h-100 d-flex flex-column justify-content-between shadow-sm"
+                  style={{
+                    borderRadius: '12px',
+                    backgroundColor: '#F8F9FA',
+                    minHeight: '250px',
+                  }}
                 >
-                  <p className="lead mb-4" style={{ fontSize: '1.05rem' }}>“{t.text}”</p>
-                  <h6 className="fw-bold mt-3 mb-0">{t.name}</h6>
-                  <small className="text-muted">{t.role}</small>
+                  <p className="text-muted fst-italic mb-4">“{t.text}”</p>
+                  <div>
+                    <h6 className="fw-bold mb-0">{t.name}</h6>
+                    <small className="text-secondary">{t.role}</small>
+                  </div>
                 </div>
               </SwiperSlide>
             ))}
@@ -420,45 +429,25 @@ const handleStartCourse = (courseName: string, courseId: number) => {
         </div>
       </section>
 
-      {/* Call to Action*/}
-      <section
-        className="py-5 mb-5 text-white"
-        style={{
-          background: 'linear-gradient(135deg, #194689 0%, #0d2c55 100%)',
-          boxShadow: '0 -4px 15px rgba(0, 0, 0, 0.2)',
-          padding: '70px 0',
-        }}
-      >
-        <div className="container text-center" data-aos="zoom-in">
-          <h2 className="fw-bold mb-3" style={{ fontSize: '2.5rem', lineHeight: '1.2' }}>
-            Ready to Start Your <br /><span style={{ color: 'rgba(255,255,255,0.85)' }}>Coding Journey?</span>
+      {/* CTA Footer */}
+      <footer className="py-5 bg-dark text-white text-center">
+        <div className="container">
+          <h2 className="fw-bold mb-4" data-aos="fade-up">
+            Ready to Start Your Journey?
           </h2>
-          <p className="lead mb-4" style={{
-            maxWidth: '700px',
-            margin: '0 auto 2.5rem auto',
-            opacity: '0.9'
-          }}>
-            Join CodeAdapt today and learn at your own pace with adaptive guidance.
-            Build real projects, track your progress, and become job-ready with a supportive community by your side.
-          </p>
           <button
-            className="btn btn-lg fw-bold"
-            style={{
-              padding: '12px 30px',
-              borderRadius: '30px',
-              letterSpacing: '0.5px',
-              textTransform: 'uppercase',
-              backgroundColor: '#61DAFB',
-              color: '#0d2c55',
-              border: 'none',
-              boxShadow: '0 6px 20px rgba(97, 218, 251, 0.4)',
-            }}
-            onClick={() => navigate("/courses/1/topics")}
+            className="btn btn-lg btn-primary px-5"
+            data-aos="fade-up"
+            data-aos-delay="100"
+            onClick={() => navigate("/signup")}
           >
-            Get Started
+            Get Started Now
           </button>
+          <p className="mt-4 text-secondary small mb-0" data-aos="fade-up" data-aos-delay="200">
+            © 2025 CodeAdapt. All Rights Reserved.
+          </p>
         </div>
-      </section>
+      </footer>
     </>
   );
 };
