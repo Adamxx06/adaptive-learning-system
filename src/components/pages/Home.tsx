@@ -429,27 +429,15 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Footer */}
-      <footer className="py-5 bg-dark text-white text-center">
-        <div className="container">
-          <h2 className="fw-bold mb-4" data-aos="fade-up">
-            Ready to Start Your Journey?
-          </h2>
-          <button
-            className="btn btn-lg btn-primary px-5"
-            data-aos="fade-up"
-            data-aos-delay="100"
-            onClick={() => navigate("/signup")}
-          >
-            Get Started Now
-          </button>
-          <p className="mt-4 text-secondary small mb-0" data-aos="fade-up" data-aos-delay="200">
-            © 2025 CodeAdapt. All Rights Reserved.
-          </p>
-        </div>
-      </footer>
-    </>
-  );
+      <section className="py-5 text-white" style={{ background: 'linear-gradient(135deg, #194689 0%, #0d2c55 100%)', boxShadow: '0 -4px 15px rgba(0, 0, 0, 0.2)', padding: '70px 0', }} > <div className="container text-center" data-aos="zoom-in">
+        <h2 className="fw-bold mb-3" style={{ fontSize: '2.5rem', lineHeight: '1.2' }}>
+          Ready to Start Your <br />
+          <span style={{ color: 'rgba(255,255,255,0.85)' }}>Coding Journey?</span>
+        </h2>
+        <p className="lead mb-4" style={{ maxWidth: '700px', margin: '0 auto 2.5rem auto', opacity: '0.9' }}>
+          Join CodeAdapt today and learn at your own pace with adaptive guidance. Build real projects, track your progress, and become job-ready with a supportive community by your side.
+        </p>
+        <button className="btn btn-lg fw-bold" style={{ padding: '12px 30px', borderRadius: '30px', letterSpacing: '0.5px', textTransform: 'uppercase', backgroundColor: '#61DAFB', color: '#0d2c55', border: 'none', boxShadow: '0 6px 20px rgba(97, 218, 251, 0.4)', }} onClick={() => navigate("/signup")}> Get Started </button> </div> </section> </>);
 };
 
 export default Home;
