@@ -108,7 +108,7 @@ const Navbar = () => {
                 Terms of Service
               </NavLink>
             </li>
-            <li className="nav-item me-lg-4"></li> {/* Spacer */}
+            <li className="nav-item me-lg-4"></li>
             <li className="nav-item">
               <Link
                 to="/signin"

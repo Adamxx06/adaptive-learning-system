@@ -147,7 +147,7 @@ export default function TopicsPage() {
       <main className="flex-grow-1 p-4 p-lg-5 overflow-auto">
         {selectedTopicId !== null && topics.length > 0 ? (
           <TopicView
-            topicId={selectedTopicId} // ✅ guaranteed number
+            topicId={selectedTopicId} 
             onNavigate={handleNextPrev}
             topics={topics}
           />
